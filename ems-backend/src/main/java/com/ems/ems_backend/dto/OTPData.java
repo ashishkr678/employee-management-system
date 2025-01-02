@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class OTPData {
     private int otp;
     private String newEmail;
+    private boolean verified;
     private LocalDateTime timestamp;
 
     public OTPData(int otp, String newEmail) {
@@ -35,6 +36,14 @@ public class OTPData {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+    
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
 
     public boolean isExpired() {

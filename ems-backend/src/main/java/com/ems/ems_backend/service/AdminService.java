@@ -13,8 +13,4 @@ public interface AdminService {
 
     void updatePhoneNumber(String username, String newPhoneNumber);
 
-    void sendOtpAndUpdateEmail(String username, String newEmail);
-
-    void verifyOtpAndUpdateEmail(String username, int otp); 
-
 }
