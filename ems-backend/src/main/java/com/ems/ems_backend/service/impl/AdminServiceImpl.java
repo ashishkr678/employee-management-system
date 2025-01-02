@@ -1,31 +1,23 @@
 package com.ems.ems_backend.service.impl;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 
 import com.ems.ems_backend.dto.AdminDto;
-import com.ems.ems_backend.dto.OTPData;
 import com.ems.ems_backend.entity.Admin;
-import com.ems.ems_backend.exception.BadRequestException;
 import com.ems.ems_backend.exception.EmailAlreadyExistsException;
 import com.ems.ems_backend.exception.ResourceNotFoundException;
-import com.ems.ems_backend.exception.UnauthorizedException;
 import com.ems.ems_backend.exception.UsernameAlreadyExistsException;
 import com.ems.ems_backend.jwt.JwtUtil;
 import com.ems.ems_backend.repository.AdminRepository;
 import com.ems.ems_backend.service.AdminService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -76,7 +68,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public String loginAdmin(String username, String password) {
+    public void loginAdmin(String username, String password, HttpServletResponse response) {
         try {
             Admin admin = adminRepository.findByUsername(username)
                     .orElseThrow(() -> new ResourceNotFoundException("Invalid username or password!"));
@@ -85,36 +77,56 @@ public class AdminServiceImpl implements AdminService {
                 throw new IllegalArgumentException("Invalid username or password!");
             }
 
-            return jwtUtil.generateToken(admin.getUsername());
+            // Generate JWT token
+            String token = jwtUtil.generateToken(admin.getUsername());
+
+            // Create JWT cookie
+            Cookie jwtCookie = new Cookie("jwt", token);
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setPath("/");
+            jwtCookie.setMaxAge(10 * 60 * 60); // 10 hours
+
+            // Create username cookie
+            Cookie usernameCookie = new Cookie("username", admin.getUsername());
+            usernameCookie.setHttpOnly(false); // For ease of access on the client side
+            usernameCookie.setPath("/");
+            usernameCookie.setMaxAge(10 * 60 * 60); // 10 hours
+
+            // Add cookies to the response
+            response.addCookie(jwtCookie);
+            response.addCookie(usernameCookie);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+            throw new RuntimeException("Login failed: " + e.getMessage());
         }
     }
 
     @Override
-    public AdminDto getAdminByUsername(String username) {
-        try {
-            Admin admin = adminRepository.findByUsername(username)
-                    .orElseThrow(() -> new ResourceNotFoundException("Admin not found with username: " + username));
-
-            AdminDto adminDto = new AdminDto();
-            adminDto.setFirstName(admin.getFirstName());
-            adminDto.setLastName(admin.getLastName());
-            adminDto.setUsername(admin.getUsername());
-            adminDto.setEmail(admin.getEmail());
-            adminDto.setPhone(admin.getPhone());
-
-            return adminDto;
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException("An error occurred while retrieving admin data: " + e.getMessage());
+    public AdminDto getAdminProfile(HttpServletRequest request) {
+        String username = extractUsernameFromCookie(request);
+        if (username == null) {
+            throw new IllegalArgumentException("Unauthorized: No username found.");
         }
+
+        Admin admin = adminRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Admin not found with username: " + username));
+
+        AdminDto adminDto = new AdminDto();
+        adminDto.setFirstName(admin.getFirstName());
+        adminDto.setLastName(admin.getLastName());
+        adminDto.setUsername(admin.getUsername());
+        adminDto.setEmail(admin.getEmail());
+        adminDto.setPhone(admin.getPhone());
+
+        return adminDto;
     }
 
     @Override
-    public void changePassword(String username, String currentPassword, String newPassword) {
+    public void changePassword(HttpServletRequest request, String currentPassword, String newPassword) {
+        String username = extractUsernameFromCookie(request);
+        if (username == null) {
+            throw new IllegalArgumentException("Unauthorized: No username found.");
+        }
+
         Admin admin = adminRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Admin not found with username: " + username));
 
@@ -127,7 +139,12 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void updatePhoneNumber(String username, String newPhoneNumber) {
+    public void updatePhoneNumber(HttpServletRequest request, String newPhoneNumber) {
+        String username = extractUsernameFromCookie(request);
+        if (username == null) {
+            throw new IllegalArgumentException("Unauthorized: No username found.");
+        }
+
         Admin admin = adminRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Admin not found with username: " + username));
 
@@ -137,6 +154,38 @@ public class AdminServiceImpl implements AdminService {
 
         admin.setPhone(newPhoneNumber);
         adminRepository.save(admin);
+    }
+
+    private String extractUsernameFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("username")) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void logout(HttpServletResponse response) {
+        try {
+            Cookie jwtCookie = new Cookie("jwt", null);
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setPath("/");
+            jwtCookie.setMaxAge(0);
+
+            Cookie usernameCookie = new Cookie("username", null);
+            usernameCookie.setHttpOnly(false);
+            usernameCookie.setPath("/");
+            usernameCookie.setMaxAge(0);
+
+            response.addCookie(jwtCookie);
+            response.addCookie(usernameCookie);
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while logging out: " + e.getMessage(), e);
+        }
     }
 
 }

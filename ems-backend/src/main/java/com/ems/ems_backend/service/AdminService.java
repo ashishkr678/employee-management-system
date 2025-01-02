@@ -2,15 +2,20 @@ package com.ems.ems_backend.service;
 
 import com.ems.ems_backend.dto.AdminDto;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 public interface AdminService {
     void registerAdmin(AdminDto adminDto);
 
-    String loginAdmin(String username, String password);
+    void loginAdmin(String username, String password, HttpServletResponse response);
     
-    AdminDto getAdminByUsername(String username);
+    AdminDto getAdminProfile(HttpServletRequest request);
 
-    void changePassword(String username, String currentPassword, String newPassword);
+    void changePassword(HttpServletRequest request, String currentPassword, String newPassword);
 
-    void updatePhoneNumber(String username, String newPhoneNumber);
+    void updatePhoneNumber(HttpServletRequest request, String newPhoneNumber);
+
+    void logout(HttpServletResponse response);
 
 }

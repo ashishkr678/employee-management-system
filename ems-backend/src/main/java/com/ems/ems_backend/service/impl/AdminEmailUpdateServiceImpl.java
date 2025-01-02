@@ -7,9 +7,6 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import com.ems.ems_backend.dto.OTPData;
@@ -20,11 +17,13 @@ import com.ems.ems_backend.exception.UnauthorizedException;
 import com.ems.ems_backend.repository.AdminRepository;
 import com.ems.ems_backend.service.AdminEmailUpdateService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class AdminEmailUpdateServiceImpl implements AdminEmailUpdateService{
+public class AdminEmailUpdateServiceImpl implements AdminEmailUpdateService {
 
     @Autowired
     private AdminRepository adminRepository;
@@ -35,17 +34,10 @@ public class AdminEmailUpdateServiceImpl implements AdminEmailUpdateService{
     private final Map<String, OTPData> otpStorage = new HashMap<>();
 
     @Override
-    public void sendOtpAndUpdateEmail(String username, String newEmail) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loggedInUser = (User) authentication.getPrincipal();
-        String loggedInUsername = loggedInUser.getUsername();
-
-        if (!loggedInUsername.equals(username)) {
-            throw new UnauthorizedException("You can only update your own email address.");
-        }
+    public void sendOtpAndUpdateEmail(HttpServletRequest request, String newEmail) {
+        String username = getUsernameFromCookies(request);
 
         int otp = new Random().nextInt(900000) + 100000;
-
         OTPData otpData = new OTPData(otp, newEmail);
         otpStorage.put(username, otpData);
 
@@ -57,14 +49,8 @@ public class AdminEmailUpdateServiceImpl implements AdminEmailUpdateService{
     }
 
     @Override
-    public void verifyOtpAndUpdateEmail(String username, int otp) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loggedInUser = (User) authentication.getPrincipal();
-        String loggedInUsername = loggedInUser.getUsername();
-
-        if (!loggedInUsername.equals(username)) {
-            throw new UnauthorizedException("You can only update your own email address.");
-        }
+    public void verifyOtpAndUpdateEmail(HttpServletRequest request, int otp) {
+        String username = getUsernameFromCookies(request);
 
         OTPData otpData = otpStorage.get(username);
         if (otpData == null || otpData.isExpired()) {
@@ -83,5 +69,15 @@ public class AdminEmailUpdateServiceImpl implements AdminEmailUpdateService{
 
         admin.setEmail(otpData.getNewEmail());
         adminRepository.save(admin);
+    }
+
+    private String getUsernameFromCookies(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("username")) {
+                return cookie.getValue();
+            }
+        }
+        throw new UnauthorizedException("Unauthorized: No username found in cookies.");
     }
 }

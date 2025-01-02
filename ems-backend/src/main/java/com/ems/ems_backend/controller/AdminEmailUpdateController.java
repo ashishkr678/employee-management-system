@@ -16,6 +16,7 @@ import com.ems.ems_backend.exception.ResourceNotFoundException;
 import com.ems.ems_backend.exception.UnauthorizedException;
 import com.ems.ems_backend.service.AdminEmailUpdateService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 
 @CrossOrigin("*")
@@ -29,15 +30,15 @@ public class AdminEmailUpdateController {
     private AdminEmailUpdateService adminService;
 
     @PostMapping("/send-otp")
-    public ResponseEntity<?> sendOtp(@RequestParam String username, @RequestBody Map<String, String> request) {
-        String newEmail = request.get("newEmail");
+    public ResponseEntity<?> sendOtp(HttpServletRequest request, @RequestBody Map<String, String> requestBody) {
+        String newEmail = requestBody.get("newEmail");
 
         if (newEmail == null || newEmail.trim().isEmpty()) {
             return ResponseEntity.badRequest().body("New email is required!");
         }
 
         try {
-            adminService.sendOtpAndUpdateEmail(username, newEmail);
+            adminService.sendOtpAndUpdateEmail(request, newEmail);
             return ResponseEntity.ok("OTP sent successfully to " + newEmail + ". Please verify to update email.");
         } catch (UnauthorizedException e) {
             return ResponseEntity.status(403).body("Unauthorized: " + e.getMessage());
@@ -49,11 +50,11 @@ public class AdminEmailUpdateController {
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<?> verifyOtp(@RequestParam String username, @RequestBody Map<String, Object> request) {
-        int otp = (int) request.get("otp");
+    public ResponseEntity<?> verifyOtp(HttpServletRequest request, @RequestBody Map<String, Object> requestBody) {
+        int otp = (int) requestBody.get("otp");
 
         try {
-            adminService.verifyOtpAndUpdateEmail(username, otp);
+            adminService.verifyOtpAndUpdateEmail(request, otp);
             return ResponseEntity.ok("Email updated successfully!");
         } catch (UnauthorizedException e) {
             return ResponseEntity.status(403).body("Unauthorized: " + e.getMessage());

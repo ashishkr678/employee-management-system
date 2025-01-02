@@ -1,9 +1,11 @@
 package com.ems.ems_backend.service;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 public interface AdminEmailUpdateService {
     
-    void sendOtpAndUpdateEmail(String username, String newEmail);
+    void sendOtpAndUpdateEmail(HttpServletRequest request, String newEmail);
 
-    void verifyOtpAndUpdateEmail(String username, int otp); 
+    public void verifyOtpAndUpdateEmail(HttpServletRequest request, int otp); 
 
 }
