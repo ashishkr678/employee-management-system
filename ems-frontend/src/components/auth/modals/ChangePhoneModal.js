@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 
@@ -5,14 +6,14 @@ const ChangePhoneModal = ({ isOpen, onClose }) => {
   const [phone, setPhone] = useState("");
   const [rePhone, setRePhone] = useState("");
   const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({ phone: false, rePhone: false }); // Track if a field was touched
+  const [touched, setTouched] = useState({ phone: false, rePhone: false });
 
   useEffect(() => {
     if (!isOpen) {
       setPhone("");
       setRePhone("");
       setErrors({});
-      setTouched({ phone: false, rePhone: false }); // Reset touched state when modal closes
+      setTouched({ phone: false, rePhone: false });
     }
   }, [isOpen]);
 
@@ -25,7 +26,6 @@ const ChangePhoneModal = ({ isOpen, onClose }) => {
     setErrors({});
     let hasError = false;
 
-    // Validate inputs
     if (!phone) {
       setErrors((prev) => ({ ...prev, phone: "Please enter your phone number!" }));
       hasError = true;
@@ -53,36 +53,24 @@ const ChangePhoneModal = ({ isOpen, onClose }) => {
 
     if (hasError) return;
 
-    const username = localStorage.getItem("username");
-    if (!username) {
-      toast.error("User not found. Please log in again.");
-      return;
-    }
-
     try {
-      const response = await fetch("http://localhost:8080/api/admin/update-phone", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-        body: JSON.stringify({ username, newPhoneNumber: phone }),
-      });
+      const response = await axios.put(
+        "http://localhost:8080/api/admin/update-phone",
+        { newPhoneNumber: phone },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
 
-      const contentType = response.headers.get("content-type");
-
-      if (!response.ok) {
-        throw new Error("Failed to update phone number. Please try again later.");
-      }
-
-      if (contentType && contentType.includes("application/json")) {
-        const successData = await response.json();
-        toast.success(successData.message || "Phone number updated successfully!");
+      if (response.status === 200) {
+        toast.success("Phone number updated successfully!");
+        onClose();
       } else {
-        const textData = await response.text();
-        toast.success(textData || "Phone number updated successfully!");
+        toast.error("Failed to update phone number. Please try again.");
       }
-
       onClose();
     } catch (error) {
       toast.error("Failed to update phone number. Please try again later.");
@@ -91,7 +79,7 @@ const ChangePhoneModal = ({ isOpen, onClose }) => {
 
   const handleInputChange = (field, value) => {
     if (touched[field] && errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" })); // Clear error when user starts typing again
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
 
     if (field === "phone") {

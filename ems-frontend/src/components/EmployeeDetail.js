@@ -15,13 +15,10 @@ const EmployeeDetail = () => {
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
-        const authToken = localStorage.getItem("authToken");
         const response = await axios.get(
           `http://localhost:8080/api/employees/${id}`,
           {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
+            withCredentials: true,
           }
         );
         setEmployee(response.data);
@@ -62,13 +59,9 @@ const EmployeeDetail = () => {
       setErrors(newErrors);
       return;
     }
-
     try {
-      const authToken = localStorage.getItem("authToken");
       await axios.put(`http://localhost:8080/api/employees/${id}`, formData, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
+        withCredentials: true,
       });
       setEmployee(formData);
       setIsEditing(false);
@@ -82,11 +75,8 @@ const EmployeeDetail = () => {
 
   const handleDelete = async () => {
     try {
-      const authToken = localStorage.getItem("authToken");
       await axios.delete(`http://localhost:8080/api/employees/${id}`, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
+        withCredentials: true,
       });
       toast.success("Employee deleted successfully!");
       navigate("/employees");

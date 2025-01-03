@@ -48,7 +48,7 @@ public class AdminController {
             adminService.loginAdmin(adminDto.getUsername(), adminDto.getPassword(), response);
             return ResponseEntity.ok("Login successful...");
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Login failed: " + e.getMessage());
+            return ResponseEntity.status(500).body(e.getMessage());
         }
     }
 
@@ -74,9 +74,6 @@ public class AdminController {
             if (newPassword == null || newPassword.trim().isEmpty()) {
                 return ResponseEntity.badRequest().body("New password cannot be empty!");
             }
-
-            // Call the service to handle password change with username extracted from
-            // cookies
             adminService.changePassword(httpServletRequest, currentPassword, newPassword);
             return ResponseEntity.ok("Password changed successfully!");
         } catch (IllegalArgumentException e) {
@@ -114,6 +111,17 @@ public class AdminController {
             return ResponseEntity.ok("Logged out successfully!");
         } catch (RuntimeException e) {
             return ResponseEntity.status(500).body("Logout failed: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/check-auth")
+    public ResponseEntity<String> checkAuth(HttpServletRequest request) {
+        boolean isAuthenticated = adminService.checkAuth(request);
+
+        if (isAuthenticated) {
+            return ResponseEntity.ok("Authenticated");
+        } else {
+            return ResponseEntity.status(401).body("Invalid or expired token");
         }
     }
 

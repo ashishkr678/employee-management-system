@@ -15,6 +15,7 @@ import com.ems.ems_backend.jwt.JwtUtil;
 import com.ems.ems_backend.repository.AdminRepository;
 import com.ems.ems_backend.service.AdminService;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -77,26 +78,22 @@ public class AdminServiceImpl implements AdminService {
                 throw new IllegalArgumentException("Invalid username or password!");
             }
 
-            // Generate JWT token
             String token = jwtUtil.generateToken(admin.getUsername());
 
-            // Create JWT cookie
             Cookie jwtCookie = new Cookie("jwt", token);
             jwtCookie.setHttpOnly(true);
             jwtCookie.setPath("/");
-            jwtCookie.setMaxAge(10 * 60 * 60); // 10 hours
+            jwtCookie.setMaxAge(10 * 60 * 60);
 
-            // Create username cookie
             Cookie usernameCookie = new Cookie("username", admin.getUsername());
-            usernameCookie.setHttpOnly(false); // For ease of access on the client side
+            usernameCookie.setHttpOnly(false);
             usernameCookie.setPath("/");
-            usernameCookie.setMaxAge(10 * 60 * 60); // 10 hours
+            usernameCookie.setMaxAge(10 * 60 * 60);
 
-            // Add cookies to the response
             response.addCookie(jwtCookie);
             response.addCookie(usernameCookie);
         } catch (Exception e) {
-            throw new RuntimeException("Login failed: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -104,7 +101,7 @@ public class AdminServiceImpl implements AdminService {
     public AdminDto getAdminProfile(HttpServletRequest request) {
         String username = extractUsernameFromCookie(request);
         if (username == null) {
-            throw new IllegalArgumentException("Unauthorized: No username found.");
+            throw new IllegalArgumentException("No username found.");
         }
 
         Admin admin = adminRepository.findByUsername(username)
@@ -124,7 +121,7 @@ public class AdminServiceImpl implements AdminService {
     public void changePassword(HttpServletRequest request, String currentPassword, String newPassword) {
         String username = extractUsernameFromCookie(request);
         if (username == null) {
-            throw new IllegalArgumentException("Unauthorized: No username found.");
+            throw new IllegalArgumentException("No username found.");
         }
 
         Admin admin = adminRepository.findByUsername(username)
@@ -142,7 +139,7 @@ public class AdminServiceImpl implements AdminService {
     public void updatePhoneNumber(HttpServletRequest request, String newPhoneNumber) {
         String username = extractUsernameFromCookie(request);
         if (username == null) {
-            throw new IllegalArgumentException("Unauthorized: No username found.");
+            throw new IllegalArgumentException("No username found.");
         }
 
         Admin admin = adminRepository.findByUsername(username)
@@ -188,4 +185,29 @@ public class AdminServiceImpl implements AdminService {
         }
     }
 
+    @Override
+    public boolean checkAuth(HttpServletRequest request) {
+        String token = null;
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("jwt".equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (token != null) {
+            try {
+                Claims claims = jwtUtil.validateToken(token);
+                return claims != null;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        return false;
+    }
 }

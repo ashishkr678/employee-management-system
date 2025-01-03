@@ -64,14 +64,9 @@ const AddEmployee = () => {
 
     setLoading(true);
     try {
-      const authToken = localStorage.getItem("authToken");
-      await axios.post("http://localhost:8080/api/employees", 
-      formData,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
+      await axios.post("http://localhost:8080/api/employees", formData, {
+        withCredentials: true,
+      });
       toast.success("Employee added successfully!");
       navigate("/employees");
     } catch (error) {
@@ -86,7 +81,7 @@ const AddEmployee = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1); // Goes back to the previous page, no matter where it was
+    navigate(-1);
   };
 
   return (

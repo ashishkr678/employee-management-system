@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaExclamationCircle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "./auth";
+import toast from "react-hot-toast";
 
 const Login = ({ setIsAuthenticated }) => {
   const [username, setUsername] = useState("");
@@ -14,7 +15,7 @@ const Login = ({ setIsAuthenticated }) => {
   const handleLogin = async () => {
     setErrors({});
     setErrorMessage("");
-  
+
     let hasError = false;
     if (!username.trim()) {
       setErrors((prev) => ({ ...prev, username: "Please enter a username!" }));
@@ -24,26 +25,24 @@ const Login = ({ setIsAuthenticated }) => {
       setErrors((prev) => ({ ...prev, password: "Please enter a password!" }));
       hasError = true;
     }
-  
+
     if (hasError) return;
-  
+
     try {
-      const token = await loginUser({ username, password });
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("username", username);
+      await loginUser({ username, password });
       setIsAuthenticated(true);
+      toast.success("Login successful..");
       navigate("/employees");
     } catch (error) {
-      if (error.message === "Invalid username or password!") {
-        setErrorMessage("Invalid username or password!");
-      } else if (error.message === "Login failed. Please try again.") {
-        setErrorMessage("Login failed. Please try again.");
+      const errorMessage = error.message;
+  
+      if (errorMessage === "Invalid username or password!") {
+        setErrorMessage(errorMessage);
       } else {
-        setErrorMessage("Login failed. Please try again later.");
+        toast.error("Login failed. Please try again later.");
       }
     }
   };
-  
 
   const handleInputChange = (field, value) => {
     if (errors[field]) {
@@ -66,7 +65,10 @@ const Login = ({ setIsAuthenticated }) => {
           </h2>
 
           <div className="mb-4">
-            <label htmlFor="username" className="block text-gray-700 font-semibold mb-2">
+            <label
+              htmlFor="username"
+              className="block text-gray-700 font-semibold mb-2"
+            >
               Username <span className="text-red-500">*</span>
             </label>
             <input
@@ -87,7 +89,10 @@ const Login = ({ setIsAuthenticated }) => {
           </div>
 
           <div className="mb-4 relative">
-            <label htmlFor="password" className="block text-gray-700 font-semibold mb-2">
+            <label
+              htmlFor="password"
+              className="block text-gray-700 font-semibold mb-2"
+            >
               Password <span className="text-red-500">*</span>
             </label>
             <div className="relative">
@@ -129,7 +134,9 @@ const Login = ({ setIsAuthenticated }) => {
             </Link>
           </div>
           {errorMessage && (
-            <p className="text-center text-red-500 text-sm mt-4">{errorMessage}</p>
+            <p className="text-center text-red-500 text-sm mt-4">
+              {errorMessage}
+            </p>
           )}
         </div>
       </div>

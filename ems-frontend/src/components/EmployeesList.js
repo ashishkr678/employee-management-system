@@ -10,15 +10,9 @@ const EmployeesList = ({ refreshKey }) => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const authToken = localStorage.getItem("authToken");
-        const response = await axios.get(
-          "http://localhost:8080/api/employees",
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        );
+        const response = await axios.get("http://localhost:8080/api/employees", {
+          withCredentials: true,
+        });
         setEmployees(response.data);
         setLoading(false);
       } catch (error) {

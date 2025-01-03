@@ -1,25 +1,47 @@
+import axios from "axios";
+
 export const loginUser = async ({ username, password }) => {
   try {
-    const response = await fetch("http://localhost:8080/api/admin/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-
-      if (errorData.error === "Invalid username or password!") {
-        throw new Error("Invalid username or password!");
+    const response = await axios.post(
+      "http://localhost:8080/api/admin/login",
+      { username, password },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
       }
-      throw new Error(errorData.message || "Login failed. Please try again.");
+    );
+
+    if (response.status >= 400) {
+      throw new Error(response.data || "Login failed. Please try again.");
     }
 
-    const data = await response.json();
-    return data.token;
+    return "Login successful..";
   } catch (error) {
-    throw error;
+    if (error.response && error.response.data) {
+      throw new Error(error.response.data);
+    } else {
+      throw new Error("Login failed. Please try again later.");
+    }
+  }
+};
+
+
+export const logout = async () => {
+  try {
+    const response = await axios.put(
+      "http://localhost:8080/api/admin/logout",
+      {},
+      { withCredentials: true }
+    );
+
+    if (response.status === 200) {
+      return { success: true };
+    } else {
+      return { success: false, message: response.data };
+    }
+  } catch (error) {
+    return { success: false, message: error.message };
   }
 };

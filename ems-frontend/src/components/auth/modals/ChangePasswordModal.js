@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 
@@ -37,58 +38,34 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
   const handleSave = async () => {
     if (!validateFields()) return;
 
-    const username = localStorage.getItem("username");
     try {
-      const response = await fetch(
+      const response = await axios.put(
         "http://localhost:8080/api/admin/change-password",
+        { currentPassword, newPassword },
         {
-          method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
-          body: JSON.stringify({ username, currentPassword, newPassword }),
+          withCredentials: true,
         }
       );
-
-      if (!response.ok) {
-        const contentType = response.headers.get("Content-Type");
-        let errorData;
-
-        if (contentType && contentType.includes("application/json")) {
-          errorData = await response.json();
-        } else {
-          errorData = { message: await response.text() };
-        }
-
-        if (errorData.message === "Current password is incorrect!") {
-          throw new Error("Current password is incorrect!");
-        }
-        throw new Error(
-          errorData.message ||
-            "Failed to change password. Please try again later."
-        );
-      }
-
-      const contentType = response.headers.get("Content-Type");
-      let successMessage;
-
-      if (contentType && contentType.includes("application/json")) {
-        const data = await response.json();
-        successMessage = data.message || "Password changed successfully!";
-      } else {
-        successMessage = await response.text();
-      }
-
+  
+      const successMessage = response.data.message || "Password changed successfully...";
       toast.success(successMessage);
       onClose();
     } catch (error) {
-      if (error instanceof TypeError || !error.message) {
-        toast.error("Failed to change password. Please try again later.");
-      } else if (error.message === "Current password is incorrect!") {
-        setErrors((prev) => ({ ...prev, currentPassword: error.message }));
+      if (error.response) {
+        const errorData = error.response.data;
+        const errorMessage =
+          typeof errorData === "string" ? errorData : errorData?.message;
+  
+        if (errorMessage === "Current password is incorrect!") {
+          setErrors((prev) => ({ ...prev, currentPassword: errorMessage }));
+        } else {
+          toast.error(errorMessage || "Failed to change password. Please try again.");
+        }
       } else {
-        toast.error(error.message);
+        toast.error("Failed to change password. Please try again.");
       }
     }
   };

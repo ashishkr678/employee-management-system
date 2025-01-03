@@ -21,19 +21,11 @@ const Profile = () => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   const fetchAdminData = async () => {
-    const username = localStorage.getItem("username");
-    if (!username) {
-      toast.error("Session logged out. Please log in again.");
-      return;
-    }
-
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/admin/${username}`,
+        `http://localhost:8080/api/admin/profile`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
+          withCredentials: true,
         }
       );
       setAdmin(response.data);
@@ -53,11 +45,15 @@ const Profile = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 via-purple-300 to-pink-200 p-6">
       <div className="w-full max-w-2xl bg-white shadow-lg rounded-lg p-8">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">Admin Profile</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
+          Admin Profile
+        </h2>
         <div className="space-y-6">
           {/* First Name */}
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">First Name</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              First Name
+            </label>
             <input
               type="text"
               value={admin.firstName || ""}
@@ -68,7 +64,9 @@ const Profile = () => {
 
           {/* Last Name */}
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Last Name</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Last Name
+            </label>
             <input
               type="text"
               value={admin.lastName || ""}
@@ -79,7 +77,9 @@ const Profile = () => {
 
           {/* Username */}
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Username</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Username
+            </label>
             <input
               type="text"
               value={admin.username || ""}
@@ -90,7 +90,9 @@ const Profile = () => {
 
           {/* Email */}
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Email</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Email
+            </label>
             <div className="flex items-center relative">
               <input
                 type="email"
@@ -109,7 +111,9 @@ const Profile = () => {
 
           {/* Phone */}
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Phone</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Phone
+            </label>
             <div className="flex items-center relative">
               <input
                 type="text"
@@ -128,7 +132,9 @@ const Profile = () => {
 
           {/* Password */}
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Password</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Password
+            </label>
             <div className="flex items-center relative">
               <input
                 type="password"

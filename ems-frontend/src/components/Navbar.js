@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FiSearch } from "react-icons/fi";
+import { logout } from "./auth/auth";
+import toast from "react-hot-toast";
 
 const Navbar = ({ onLogout }) => {
   const [searchId, setSearchId] = useState("");
@@ -18,13 +20,10 @@ const Navbar = ({ onLogout }) => {
     }
 
     try {
-      const token = localStorage.getItem("authToken");
       const response = await axios.get(
         `http://localhost:8080/api/employees/${query}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          withCredentials: true,
         }
       );
 
@@ -32,9 +31,19 @@ const Navbar = ({ onLogout }) => {
       setFilteredEmployees(employee);
       setIsDropdownOpen(true);
     } catch (error) {
-      console.error("Error fetching employees:", error);
       setFilteredEmployees([]);
       setIsDropdownOpen(true);
+    }
+  };
+
+  const handleLogout = async () => {
+    const result = await logout();
+    if (result.success) {
+      toast.success("Logged Out!");
+      onLogout();
+      navigate("/");
+    } else {
+      toast.error("An error occurred during logout. Please try again.");
     }
   };
 
@@ -47,7 +56,7 @@ const Navbar = ({ onLogout }) => {
   const handleClickOutside = (e) => {
     if (searchRef.current && !searchRef.current.contains(e.target)) {
       setIsDropdownOpen(false);
-      setSearchId(""); // Reset search value
+      setSearchId("");
     }
   };
 
@@ -125,7 +134,7 @@ const Navbar = ({ onLogout }) => {
           My Profile
         </Link>
         <button
-          onClick={onLogout}
+          onClick={handleLogout}
           className="text-sm font-medium hover:text-blue-400 transition-colors"
         >
           Logout
