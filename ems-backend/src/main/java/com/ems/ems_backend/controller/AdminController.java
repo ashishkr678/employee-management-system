@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,14 +33,14 @@ public class AdminController {
     private AdminService adminService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerAdmin(@RequestBody AdminDto adminDto) {
+    public ResponseEntity<?> registerAdmin(@RequestBody AdminDto adminDto) {
         try {
             adminService.registerAdmin(adminDto);
-            return ResponseEntity.ok("Admin registered successfully!");
+            return ResponseEntity.ok(Map.of("message", "Admin registered successfully!"));
         } catch (UsernameAlreadyExistsException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", "Bad Request", "message", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
+            return ResponseEntity.status(500).body(Map.of("error", "Error", "message", e.getMessage()));
         }
     }
 
@@ -46,9 +48,23 @@ public class AdminController {
     public ResponseEntity<?> loginAdmin(@RequestBody AdminDto adminDto, HttpServletResponse response) {
         try {
             adminService.loginAdmin(adminDto.getUsername(), adminDto.getPassword(), response);
-            return ResponseEntity.ok("Login successful...");
+            return ResponseEntity.ok(Map.of("message", "Login successful!"));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(Map.of(
+                    "error", "Not Found",
+                    "message", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(Map.of(
+                    "error", "Bad Request",
+                    "message", e.getMessage()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Server Error",
+                    "message", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(e.getMessage());
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Unexpected Error",
+                    "message", e.getMessage()));
         }
     }
 
@@ -58,9 +74,13 @@ public class AdminController {
             AdminDto adminDto = adminService.getAdminProfile(request);
             return ResponseEntity.ok(adminDto);
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body("Admin not found: " + e.getMessage());
+            return ResponseEntity.status(404).body(Map.of(
+                    "error", "Not Found",
+                    "message", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Error",
+                    "message", e.getMessage()));
         }
     }
 
@@ -72,14 +92,16 @@ public class AdminController {
             String newPassword = request.get("newPassword");
 
             if (newPassword == null || newPassword.trim().isEmpty()) {
-                return ResponseEntity.badRequest().body("New password cannot be empty!");
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "Bad Request", "message", "New password cannot be empty!"));
             }
+
             adminService.changePassword(httpServletRequest, currentPassword, newPassword);
-            return ResponseEntity.ok("Password changed successfully!");
+            return ResponseEntity.ok(Map.of("message", "Password changed successfully!"));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", "Bad Request", "message", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
+            return ResponseEntity.status(500).body(Map.of("error", "Error", "message", e.getMessage()));
         }
     }
 
@@ -90,39 +112,38 @@ public class AdminController {
             String newPhoneNumber = request.get("newPhoneNumber");
 
             if (newPhoneNumber == null || newPhoneNumber.trim().isEmpty()) {
-                return ResponseEntity.badRequest().body("New phone number cannot be empty!");
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "Bad Request", "message", "New phone number cannot be empty!"));
             }
 
             adminService.updatePhoneNumber(httpServletRequest, newPhoneNumber);
-            return ResponseEntity.ok("Phone number updated successfully!");
+            return ResponseEntity.ok(Map.of("message", "Phone number updated successfully!"));
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
+            return ResponseEntity.status(404).body(Map.of("error", "Not Found", "message", e.getMessage()));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", "Bad Request", "message", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
+            return ResponseEntity.status(500).body(Map.of("error", "Error", "message", e.getMessage()));
         }
     }
 
     @PutMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletResponse response) {
+    public ResponseEntity<?> logout(HttpServletResponse response) {
         try {
             adminService.logout(response);
-            return ResponseEntity.ok("Logged out successfully!");
+            return ResponseEntity.ok(Map.of("message", "Logged out successfully!"));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(500).body("Logout failed: " + e.getMessage());
+            return ResponseEntity.status(500).body(Map.of("error", "Error", "message", e.getMessage()));
         }
     }
 
     @GetMapping("/check-auth")
-    public ResponseEntity<String> checkAuth(HttpServletRequest request) {
-        boolean isAuthenticated = adminService.checkAuth(request);
-
-        if (isAuthenticated) {
-            return ResponseEntity.ok("Authenticated");
-        } else {
-            return ResponseEntity.status(401).body("Invalid or expired token");
+    public ResponseEntity<?> checkAuth() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()
+                && !authentication.getName().equals("anonymousUser")) {
+            return ResponseEntity.ok(Map.of("message", "Authenticated"));
         }
+        return ResponseEntity.status(401).body(Map.of("error", "Unauthorized", "message", "User is not authenticated"));
     }
-
 }

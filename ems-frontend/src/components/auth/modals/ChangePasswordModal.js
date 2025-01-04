@@ -1,12 +1,14 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const ChangePasswordModal = ({ isOpen, onClose }) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isOpen) {
@@ -20,20 +22,43 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
   const validateFields = () => {
     const newErrors = {};
 
-    if (!currentPassword)
+    if (!currentPassword) {
       newErrors.currentPassword = "Current password is required.";
-    if (!newPassword) newErrors.newPassword = "New password is required.";
-    if (newPassword === currentPassword)
-      newErrors.newPassword = "New password cannot be the same as the current password.";
-    if (!confirmPassword)
+    }
+
+    if (!newPassword) {
+      newErrors.newPassword = "New password is required.";
+    }
+
+    if (!confirmPassword) {
       newErrors.confirmPassword = "Confirm password is required.";
+    }
+
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (newPassword && !passwordRegex.test(newPassword)) {
+      newErrors.newPassword =
+        "Password must contain at least 8 characters, including uppercase, lowercase, a digit, and a special character.";
+    }
+
     if (newPassword && confirmPassword && newPassword !== confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match.";
     }
 
+    if (newPassword && currentPassword && newPassword === currentPassword) {
+      newErrors.newPassword =
+        "New password cannot be the same as the current password.";
+    }
+
+    if (!confirmPassword) {
+      newErrors.confirmPassword = "Confirm password is required.";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+};
+
 
   const handleSave = async () => {
     if (!validateFields()) return;
@@ -49,8 +74,9 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
           withCredentials: true,
         }
       );
-  
-      const successMessage = response.data.message || "Password changed successfully...";
+
+      const successMessage =
+        response.data.message || "Password changed successfully...";
       toast.success(successMessage);
       onClose();
     } catch (error) {
@@ -58,7 +84,7 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
         const errorData = error.response.data;
         const errorMessage =
           typeof errorData === "string" ? errorData : errorData?.message;
-  
+
         if (errorMessage === "Current password is incorrect!") {
           setErrors((prev) => ({ ...prev, currentPassword: errorMessage }));
         } else {
@@ -91,6 +117,7 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
               type="password"
               name="currentPassword"
               value={currentPassword}
+              placeholder="Enter current password"
               onChange={handleInputChange(
                 setCurrentPassword,
                 "currentPassword"
@@ -114,6 +141,7 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
               type="password"
               name="newPassword"
               value={newPassword}
+              placeholder="Enter new password"
               onChange={handleInputChange(setNewPassword, "newPassword")}
               className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none ${
                 errors.newPassword ? "border-red-500" : ""
@@ -132,6 +160,7 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
               type="password"
               name="confirmPassword"
               value={confirmPassword}
+              placeholder="Re-enter new password"
               onChange={handleInputChange(
                 setConfirmPassword,
                 "confirmPassword"
@@ -147,7 +176,7 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
             )}
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end mb-4">
             <button
               onClick={onClose}
               className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg shadow-md hover:bg-gray-400"
@@ -159,6 +188,15 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
               className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:scale-105 transition-transform"
             >
               Save
+            </button>
+          </div>
+
+          <div className="text-center mt-4">
+            <button
+              onClick={() => navigate("/forgot-password")}
+              className="text-blue-500 hover:underline"
+            >
+              Forgot Password?
             </button>
           </div>
         </div>

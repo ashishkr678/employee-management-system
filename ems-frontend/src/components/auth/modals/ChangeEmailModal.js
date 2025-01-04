@@ -44,37 +44,47 @@ const ChangeEmailModal = ({ isOpen, onClose }) => {
   const handleSendOtp = async () => {
     setErrors({});
     let hasError = false;
-  
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  
-    if (!email || !emailPattern.test(email)) {
-      setErrors((prev) => ({ ...prev, email: "Invalid email format!" }));
-      hasError = true;
-    }
+
     if (!email) {
       setErrors((prev) => ({ ...prev, email: "Please enter your email!" }));
       hasError = true;
     }
+
     if (!reEmail) {
-      setErrors((prev) => ({ ...prev, reEmail: "Please re-enter your email!" }));
+      setErrors((prev) => ({
+        ...prev,
+        reEmail: "Please re-enter your email!",
+      }));
       hasError = true;
     }
-    if (email !== reEmail) {
+
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (email && !emailPattern.test(email)) {
+      setErrors((prev) => ({ ...prev, email: "Invalid email format!" }));
+      hasError = true;
+    }
+
+    if (reEmail && !emailPattern.test(reEmail)) {
+      setErrors((prev) => ({ ...prev, reEmail: "Invalid email format!" }));
+      hasError = true;
+    }
+
+    if (email && reEmail && email !== reEmail) {
       setErrors((prev) => ({ ...prev, reEmail: "Emails do not match!" }));
       hasError = true;
     }
-  
     if (hasError) return;
-  
+
     setLoading(true);
-  
+
     try {
       await axios.post(
         "http://localhost:8080/api/admin/update-email/send-otp",
         { newEmail: email },
         { withCredentials: true }
       );
-  
+
       toast.success("OTP Sent Successfully...");
       setNewEmail(email);
       setOtpModalOpen(true);
@@ -82,8 +92,9 @@ const ChangeEmailModal = ({ isOpen, onClose }) => {
       setCanResend(false);
     } catch (error) {
       const errorMessage =
-        error.response?.data?.message || "Failed to send OTP. Please try again.";
-  
+        error.response?.data?.message ||
+        "Failed to send OTP. Please try again.";
+
       if (error.response?.data?.message === "Email already exists.") {
         setErrors((prev) => ({ ...prev, email: "Email is already in use!" }));
       } else {
@@ -93,7 +104,7 @@ const ChangeEmailModal = ({ isOpen, onClose }) => {
       setLoading(false);
     }
   };
-  
+
   const handleOtpChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;
     const updatedOtp = [...otp];
@@ -121,7 +132,7 @@ const ChangeEmailModal = ({ isOpen, onClose }) => {
       setErrors({ otp: "Please enter a 6-digit OTP!" });
       return;
     }
-
+  
     setLoading(true);
     try {
       await axios.post(
@@ -129,19 +140,24 @@ const ChangeEmailModal = ({ isOpen, onClose }) => {
         { otp: parseInt(otpValue, 10) },
         { withCredentials: true }
       );
-
+  
       toast.success("Email updated successfully!");
       setOtpModalOpen(false);
       onClose();
     } catch (error) {
       const errorMessage =
-        error.response?.data?.message || "Incorrect OTP. Please try again.";
+        error.response?.data?.message || "Failed to verify OTP. Please try again later.";
+      
       setErrors({ otp: errorMessage });
-      toast.error(errorMessage);
+  
+      if (!error.response?.data?.message) {
+        toast.error(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
   };
+  
 
   const handleCancel = () => {
     setOtpModalOpen(false);
@@ -149,17 +165,17 @@ const ChangeEmailModal = ({ isOpen, onClose }) => {
   };
 
   const handleResendOtp = async () => {
-      if (canResend) {
-        setIsResendingOtp(true);
-        setCanResend(false);
-        setTimer(120);
-    
-        setOtp(["", "", "", "", "", ""]);
-        setErrors((prev) => ({ ...prev, otp: null }));
-    
-        await handleSendOtp();
-        setIsResendingOtp(false);
-      }    
+    if (canResend) {
+      setIsResendingOtp(true);
+      setCanResend(false);
+      setTimer(120);
+
+      setOtp(["", "", "", "", "", ""]);
+      setErrors((prev) => ({ ...prev, otp: null }));
+
+      await handleSendOtp();
+      setIsResendingOtp(false);
+    }
   };
 
   return (
@@ -170,11 +186,15 @@ const ChangeEmailModal = ({ isOpen, onClose }) => {
             {loading ? (
               <div className="text-center">
                 <h3 className="text-2xl font-semibold mb-4">Processing...</h3>
-                <p className="text-gray-600">Please wait while we send your OTP.</p>
+                <p className="text-gray-600">
+                  Please wait while we send your OTP.
+                </p>
               </div>
             ) : (
               <>
-                <h3 className="text-2xl font-semibold text-center mb-4">Change Email</h3>
+                <h3 className="text-2xl font-semibold text-center mb-4">
+                  Change Email
+                </h3>
                 <div className="mb-4">
                   <label className="block text-gray-700 font-semibold mb-2">
                     New Email <span className="text-red-500">*</span>
@@ -186,6 +206,7 @@ const ChangeEmailModal = ({ isOpen, onClose }) => {
                       setEmail(e.target.value);
                       setErrors((prev) => ({ ...prev, email: null }));
                     }}
+                    placeholder="Enter your new email"
                     className={`w-full px-4 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 ${
                       errors.email ? "border-red-500" : "border-gray-300"
                     }`}
@@ -205,12 +226,15 @@ const ChangeEmailModal = ({ isOpen, onClose }) => {
                       setReEmail(e.target.value);
                       setErrors((prev) => ({ ...prev, reEmail: null }));
                     }}
+                    placeholder="Re-enter your new email"
                     className={`w-full px-4 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 ${
                       errors.reEmail ? "border-red-500" : "border-gray-300"
                     }`}
                   />
                   {errors.reEmail && (
-                    <p className="text-red-500 text-sm mt-1">{errors.reEmail}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.reEmail}
+                    </p>
                   )}
                 </div>
                 <div className="flex justify-end">
@@ -239,11 +263,15 @@ const ChangeEmailModal = ({ isOpen, onClose }) => {
             {isResendingOtp ? (
               <div className="text-center">
                 <h3 className="text-2xl font-semibold mb-4">Verifying OTP</h3>
-                <p className="text-gray-600">Please wait while we send your OTP..</p>
+                <p className="text-gray-600">
+                  Please wait while we send your OTP..
+                </p>
               </div>
             ) : (
               <>
-                <h3 className="text-2xl font-semibold text-center mb-4">Verify OTP</h3>
+                <h3 className="text-2xl font-semibold text-center mb-4">
+                  Verify OTP
+                </h3>
                 <p className="text-center mb-4 text-gray-600">
                   A 6-digit OTP is sent to {newEmail}
                 </p>
@@ -262,12 +290,15 @@ const ChangeEmailModal = ({ isOpen, onClose }) => {
                   ))}
                 </div>
                 {errors.otp && (
-                  <p className="text-red-500 text-sm text-center mb-4">{errors.otp}</p>
+                  <p className="text-red-500 text-sm text-center mb-4">
+                    {errors.otp}
+                  </p>
                 )}
                 <div className="text-center mb-4">
                   {timer > 0 ? (
                     <p className="text-gray-600 text-sm">
-                      Resend OTP in {Math.floor(timer / 60)}:{("0" + (timer % 60)).slice(-2)}
+                      Resend OTP in {Math.floor(timer / 60)}:
+                      {("0" + (timer % 60)).slice(-2)}
                     </p>
                   ) : (
                     <button

@@ -5,7 +5,7 @@ import { FiSearch } from "react-icons/fi";
 import { logout } from "./auth/auth";
 import toast from "react-hot-toast";
 
-const Navbar = ({ onLogout }) => {
+const Navbar = ({ setIsAuthenticated }) => {
   const [searchId, setSearchId] = useState("");
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -40,8 +40,8 @@ const Navbar = ({ onLogout }) => {
     const result = await logout();
     if (result.success) {
       toast.success("Logged Out!");
-      onLogout();
-      navigate("/");
+      setIsAuthenticated(false); // Update frontend state
+      navigate("/"); // Redirect to login page
     } else {
       toast.error("An error occurred during logout. Please try again.");
     }

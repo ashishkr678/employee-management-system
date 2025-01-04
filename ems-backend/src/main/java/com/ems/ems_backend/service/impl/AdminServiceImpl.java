@@ -15,7 +15,6 @@ import com.ems.ems_backend.jwt.JwtUtil;
 import com.ems.ems_backend.repository.AdminRepository;
 import com.ems.ems_backend.service.AdminService;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -92,8 +91,10 @@ public class AdminServiceImpl implements AdminService {
 
             response.addCookie(jwtCookie);
             response.addCookie(usernameCookie);
+        } catch (ResourceNotFoundException | IllegalArgumentException e) {
+            throw e; // Re-throw known exceptions for controller handling
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException("An unexpected error occurred: " + e.getMessage());
         }
     }
 
@@ -185,29 +186,4 @@ public class AdminServiceImpl implements AdminService {
         }
     }
 
-    @Override
-    public boolean checkAuth(HttpServletRequest request) {
-        String token = null;
-        Cookie[] cookies = request.getCookies();
-
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("jwt".equals(cookie.getName())) {
-                    token = cookie.getValue();
-                    break;
-                }
-            }
-        }
-
-        if (token != null) {
-            try {
-                Claims claims = jwtUtil.validateToken(token);
-                return claims != null;
-            } catch (Exception e) {
-                return false;
-            }
-        }
-
-        return false;
-    }
 }

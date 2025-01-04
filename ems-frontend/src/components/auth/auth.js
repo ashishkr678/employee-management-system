@@ -14,19 +14,19 @@ export const loginUser = async ({ username, password }) => {
     );
 
     if (response.status >= 400) {
-      throw new Error(response.data || "Login failed. Please try again.");
+      throw new Error(response.data.message || "Login failed. Please try again.");
     }
 
     return "Login successful..";
   } catch (error) {
     if (error.response && error.response.data) {
-      throw new Error(error.response.data);
+      const serverErrorMessage = error.response.data.message;
+      throw new Error(serverErrorMessage || "Login failed. Please try again.");
     } else {
       throw new Error("Login failed. Please try again later.");
     }
   }
 };
-
 
 export const logout = async () => {
   try {

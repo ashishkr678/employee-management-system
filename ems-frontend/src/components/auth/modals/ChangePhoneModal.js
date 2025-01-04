@@ -69,7 +69,7 @@ const ChangePhoneModal = ({ isOpen, onClose }) => {
         toast.success("Phone number updated successfully!");
         onClose();
       } else {
-        toast.error("Failed to update phone number. Please try again.");
+        toast.error("Failed to update phone number. Please try again later.");
       }
       onClose();
     } catch (error) {
@@ -90,7 +90,7 @@ const ChangePhoneModal = ({ isOpen, onClose }) => {
   };
 
   const handleFocus = (field) => {
-    setTouched((prev) => ({ ...prev, [field]: true })); // Mark field as touched when it is focused
+    setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
   return (
@@ -112,6 +112,7 @@ const ChangePhoneModal = ({ isOpen, onClose }) => {
               className={`w-full px-4 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 ${
                 errors.phone ? "border-red-500" : "border-gray-300"
               }`}
+              placeholder="Enter your phone number"
             />
             {touched.phone && errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
           </div>
@@ -129,6 +130,7 @@ const ChangePhoneModal = ({ isOpen, onClose }) => {
               className={`w-full px-4 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 ${
                 errors.rePhone ? "border-red-500" : "border-gray-300"
               }`}
+              placeholder="Re-enter your phone number"
             />
             {touched.rePhone && errors.rePhone && <p className="text-red-500 text-sm mt-1">{errors.rePhone}</p>}
           </div>

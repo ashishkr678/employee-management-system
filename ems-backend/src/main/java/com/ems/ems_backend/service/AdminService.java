@@ -18,6 +18,4 @@ public interface AdminService {
 
     void logout(HttpServletResponse response);
 
-    boolean checkAuth(HttpServletRequest request);
-
 }

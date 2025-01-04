@@ -31,8 +31,13 @@ public class SecurityConfig {
                 .and()
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/admin/register", "/api/admin/login", "/api/admin/forgot-password/send-otp",
-                        "/api/admin/forgot-password/verify-otp", "/api/admin/forgot-password/reset-password", "/api/admin/check-auth")
+                .requestMatchers(
+                        "/api/admin/register",
+                        "/api/admin/login",
+                        "/api/admin/forgot-password/send-otp",
+                        "/api/admin/forgot-password/verify-otp",
+                        "/api/admin/forgot-password/reset-password",
+                        "/api/admin/check-auth")
                 .permitAll()
                 .anyRequest().authenticated()
                 .and()
