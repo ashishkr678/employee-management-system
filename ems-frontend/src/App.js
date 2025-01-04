@@ -7,6 +7,7 @@ import EmployeeDetail from "./components/EmployeeDetail";
 import Login from "./components/auth/Login";
 import Profile from "./components/auth/Profile";
 import AddEmployee from "./components/AddEmployee";
+import ForgotPassword from "./components/auth/ForgotPassword";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -29,6 +30,8 @@ const App = () => {
               }
             />
             
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+
             {isAuthenticated && (
               <>
                 <Route path="/employees" element={<EmployeesList />} />

@@ -1,5 +1,6 @@
 package com.ems.ems_backend.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/admin/update-email")
-
 public class AdminEmailUpdateController {
 
     @Autowired
@@ -33,18 +33,37 @@ public class AdminEmailUpdateController {
         String newEmail = requestBody.get("newEmail");
 
         if (newEmail == null || newEmail.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("New email is required!");
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Bad Request");
+            response.put("message", "New email is required!");
+            return ResponseEntity.badRequest().body(response);
         }
 
         try {
             adminService.sendOtpAndUpdateEmail(request, newEmail);
-            return ResponseEntity.ok("OTP sent successfully to " + newEmail + ". Please verify to update email.");
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "OTP sent successfully to " + newEmail + ". Please verify to update email.");
+            return ResponseEntity.ok(response);
         } catch (UnauthorizedException e) {
-            return ResponseEntity.status(403).body("Unauthorized: " + e.getMessage());
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Unauthorized");
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(403).body(response);
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body("Not Found: " + e.getMessage());
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Not Found");
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(404).body(response);
+        } catch (BadRequestException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Bad Request");
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(400).body(response);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Error");
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(500).body(response);
         }
     }
 
@@ -54,15 +73,29 @@ public class AdminEmailUpdateController {
 
         try {
             adminService.verifyOtpAndUpdateEmail(request, otp);
-            return ResponseEntity.ok("Email updated successfully!");
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Email updated successfully!");
+            return ResponseEntity.ok(response);
         } catch (UnauthorizedException e) {
-            return ResponseEntity.status(403).body("Unauthorized: " + e.getMessage());
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Unauthorized");
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(403).body(response);
         } catch (BadRequestException e) {
-            return ResponseEntity.status(400).body("Bad Request: " + e.getMessage());
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Bad Request");
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(400).body(response);
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body("Not Found: " + e.getMessage());
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Not Found");
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(404).body(response);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Error");
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(500).body(response);
         }
     }
 }

@@ -129,7 +129,7 @@ const Login = ({ setIsAuthenticated }) => {
           </button>
 
           <div className="flex justify-center items-center mt-6">
-            <Link to="/" className="text-sm text-blue-500 hover:underline">
+            <Link to="/forgot-password" className="text-sm text-blue-500 hover:underline">
               Forgot Password?
             </Link>
           </div>

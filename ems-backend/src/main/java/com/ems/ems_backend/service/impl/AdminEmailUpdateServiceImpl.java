@@ -2,6 +2,7 @@ package com.ems.ems_backend.service.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,10 @@ public class AdminEmailUpdateServiceImpl implements AdminEmailUpdateService {
     public void sendOtpAndUpdateEmail(HttpServletRequest request, String newEmail) {
         String username = getUsernameFromCookies(request);
 
+        Optional<Admin> existingAdmin = adminRepository.findByEmail(newEmail);
+        if (existingAdmin.isPresent()) {
+            throw new BadRequestException("Email already exists.");
+        }
         int otp = new Random().nextInt(900000) + 100000;
         OTPData otpData = new OTPData(otp, newEmail);
         otpStorage.put(username, otpData);
@@ -59,7 +64,7 @@ public class AdminEmailUpdateServiceImpl implements AdminEmailUpdateService {
         }
 
         if (otpData.getOtp() != otp) {
-            throw new BadRequestException("Incorrect OTP. Please try again.");
+            throw new BadRequestException("Incorrect OTP.");
         }
 
         otpStorage.remove(username);
