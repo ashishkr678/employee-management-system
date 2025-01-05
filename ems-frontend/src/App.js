@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
-import { Navigate, BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  Navigate,
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from "react-router-dom";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import Profile from "./components/admin/pages/Profile";
@@ -20,8 +25,7 @@ const App = () => {
       const authenticated = await CheckAuth();
       setIsAuthenticated(authenticated);
       setLoading(false);
-    };
-
+    };    
     checkAdminAuth();
   }, []);
 
@@ -55,7 +59,9 @@ const App = () => {
             />
             <Route
               path="/forgot-password"
-              element={<ForgotPassword setIsAuthenticated={setIsAuthenticated} />}
+              element={
+                <ForgotPassword setIsAuthenticated={setIsAuthenticated} />
+              }
             />
 
             {isAuthenticated ? (
@@ -64,7 +70,10 @@ const App = () => {
                 <Route path="/employees/:id" element={<EmployeeDetail />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/add-employee" element={<AddEmployee />} />
-                <Route path="*" element={<Navigate to={window.location.pathname} />} />
+                <Route
+                  path="*"
+                  element={<Navigate to={window.location.pathname} />}
+                />
               </>
             ) : (
               <Route path="*" element={<Navigate to="/" />} />
