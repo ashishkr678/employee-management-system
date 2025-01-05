@@ -1,9 +1,9 @@
-import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { FiSearch } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "./admin/auth/auth";
+import api from "../apiConfig/ApiConfig";
 
 const Navbar = ({ setIsAuthenticated }) => {
   const [searchId, setSearchId] = useState("");
@@ -20,13 +20,7 @@ const Navbar = ({ setIsAuthenticated }) => {
     }
 
     try {
-      const response = await axios.get(
-        `http://localhost:8080/api/employees/${query}`,
-        {
-          withCredentials: true,
-        }
-      );
-
+      const response = await api.get(`/employees/${query}`);
       const employee = response.data ? [response.data] : [];
       setFilteredEmployees(employee);
       setIsDropdownOpen(true);
@@ -40,8 +34,8 @@ const Navbar = ({ setIsAuthenticated }) => {
     const result = await logout();
     if (result.success) {
       toast.success("Logged Out!");
-      setIsAuthenticated(false); // Update frontend state
-      navigate("/"); // Redirect to login page
+      setIsAuthenticated(false);
+      navigate("/");
     } else {
       toast.error("An error occurred during logout. Please try again.");
     }

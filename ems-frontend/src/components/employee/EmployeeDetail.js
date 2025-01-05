@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-hot-toast";
+import api from "../../apiConfig/ApiConfig";
 
 const EmployeeDetail = () => {
   const { id } = useParams();
@@ -15,12 +15,7 @@ const EmployeeDetail = () => {
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8080/api/employees/${id}`,
-          {
-            withCredentials: true,
-          }
-        );
+        const response = await api.get(`/employees/${id}`);
         setEmployee(response.data);
         setFormData(response.data);
       } catch (error) {
@@ -60,9 +55,7 @@ const EmployeeDetail = () => {
       return;
     }
     try {
-      await axios.put(`http://localhost:8080/api/employees/${id}`, formData, {
-        withCredentials: true,
-      });
+      await api.put(`/employees/${id}`, formData);
       setEmployee(formData);
       setIsEditing(false);
       setErrors({});
@@ -75,9 +68,7 @@ const EmployeeDetail = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:8080/api/employees/${id}`, {
-        withCredentials: true,
-      });
+      await api.delete(`/employees/${id}`);
       toast.success("Employee deleted successfully!");
       navigate("/employees");
     } catch (error) {

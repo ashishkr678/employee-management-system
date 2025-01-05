@@ -1,8 +1,8 @@
-import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import api from "../../../apiConfig/ApiConfig";
 
 const ChangePasswordModal = ({ isOpen, onClose }) => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -77,17 +77,10 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
     if (!validateFields()) return;
 
     try {
-      const response = await axios.put(
-        "http://localhost:8080/api/admin/change-password",
-        { currentPassword, newPassword },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-
+      const response = await api.put("/admin/change-password", {
+        currentPassword,
+        newPassword,
+      });
       const successMessage =
         response.data.message || "Password changed successfully...";
       toast.success(successMessage);
@@ -101,7 +94,9 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
         if (errorMessage === "Current password is incorrect!") {
           setErrors((prev) => ({ ...prev, currentPassword: errorMessage }));
         } else {
-          toast.error(errorMessage || "Failed to change password. Please try again.");
+          toast.error(
+            errorMessage || "Failed to change password. Please try again."
+          );
         }
       } else {
         toast.error("Failed to change password. Please try again.");
@@ -145,7 +140,11 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
                 onClick={() => togglePasswordVisibility("currentPassword")}
                 className="absolute inset-y-0 right-3 flex items-center text-gray-500"
               >
-                {showPasswords.currentPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                {showPasswords.currentPassword ? (
+                  <FaEyeSlash size={20} />
+                ) : (
+                  <FaEye size={20} />
+                )}
               </button>
             </div>
             {errors.currentPassword && (
@@ -175,7 +174,11 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
                 onClick={() => togglePasswordVisibility("newPassword")}
                 className="absolute inset-y-0 right-3 flex items-center text-gray-500"
               >
-                {showPasswords.newPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                {showPasswords.newPassword ? (
+                  <FaEyeSlash size={20} />
+                ) : (
+                  <FaEye size={20} />
+                )}
               </button>
             </div>
             {errors.newPassword && (
@@ -206,7 +209,11 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
                 onClick={() => togglePasswordVisibility("confirmPassword")}
                 className="absolute inset-y-0 right-3 flex items-center text-gray-500"
               >
-                {showPasswords.confirmPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                {showPasswords.confirmPassword ? (
+                  <FaEyeSlash size={20} />
+                ) : (
+                  <FaEye size={20} />
+                )}
               </button>
             </div>
             {errors.confirmPassword && (

@@ -1,5 +1,15 @@
 package com.ems.ems_backend.service.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.ems.ems_backend.dto.OTPData;
 import com.ems.ems_backend.entity.Admin;
 import com.ems.ems_backend.exception.BadRequestException;
@@ -8,15 +18,6 @@ import com.ems.ems_backend.repository.AdminRepository;
 import com.ems.ems_backend.service.AdminForgotPasswordService;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 
 @Service
 @AllArgsConstructor
@@ -39,7 +40,7 @@ public class AdminForgotPasswordServiceImpl implements AdminForgotPasswordServic
                 .orElseThrow(() -> new ResourceNotFoundException("Username not found."));
 
         int otp = new Random().nextInt(900000) + 100000;
-        OTPData otpData = new OTPData(otp, null); // Using null for newEmail as it's not needed here
+        OTPData otpData = new OTPData(otp, null);
         otpStorage.put(username, otpData);
 
         SimpleMailMessage message = new SimpleMailMessage();

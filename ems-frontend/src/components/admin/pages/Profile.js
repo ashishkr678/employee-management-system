@@ -1,10 +1,10 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { FaEdit } from "react-icons/fa";
 import ChangeEmailModal from "../modals/ChangeEmailModal";
 import ChangePasswordModal from "../modals/ChangePasswordModal";
 import ChangePhoneModal from "../modals/ChangePhoneModal";
+import api from "../../../apiConfig/ApiConfig";
 
 const Profile = () => {
   const [admin, setAdmin] = useState({
@@ -22,12 +22,7 @@ const Profile = () => {
 
   const fetchAdminData = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/api/admin/profile`,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await api.get("/admin/profile");
       setAdmin(response.data);
     } catch (error) {
       toast.error("Failed to load profile data. Log in again!");

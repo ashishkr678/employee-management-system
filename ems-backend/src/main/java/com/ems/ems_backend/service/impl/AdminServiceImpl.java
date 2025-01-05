@@ -92,7 +92,7 @@ public class AdminServiceImpl implements AdminService {
             response.addCookie(jwtCookie);
             response.addCookie(usernameCookie);
         } catch (ResourceNotFoundException | IllegalArgumentException e) {
-            throw e; // Re-throw known exceptions for controller handling
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("An unexpected error occurred: " + e.getMessage());
         }

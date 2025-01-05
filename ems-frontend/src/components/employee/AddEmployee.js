@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { FaExclamationCircle, FaTimes } from "react-icons/fa";
-import axios from "axios";
+import { FaExclamationCircle } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import api from "../../apiConfig/ApiConfig";
 
 const AddEmployee = () => {
   const navigate = useNavigate();
@@ -64,9 +64,7 @@ const AddEmployee = () => {
 
     setLoading(true);
     try {
-      await axios.post("http://localhost:8080/api/employees", formData, {
-        withCredentials: true,
-      });
+      await api.post("/employees", formData);
       toast.success("Employee added successfully!");
       navigate("/employees");
     } catch (error) {
@@ -89,12 +87,6 @@ const AddEmployee = () => {
       <div className="w-full max-w-lg bg-white shadow-lg rounded-lg p-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Add New Employee</h2>
-          <button
-            onClick={handleCancel}
-            className="text-gray-500 hover:text-gray-800 transition-all"
-          >
-            <FaTimes size={20} />
-          </button>
         </div>
 
         {/* First Name Field */}

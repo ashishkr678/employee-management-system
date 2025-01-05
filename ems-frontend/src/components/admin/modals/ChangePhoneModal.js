@@ -1,6 +1,6 @@
-import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
+import api from "../../../apiConfig/ApiConfig";
 
 const ChangePhoneModal = ({ isOpen, onClose }) => {
   const [phone, setPhone] = useState("");
@@ -27,7 +27,10 @@ const ChangePhoneModal = ({ isOpen, onClose }) => {
     let hasError = false;
 
     if (!phone) {
-      setErrors((prev) => ({ ...prev, phone: "Please enter your phone number!" }));
+      setErrors((prev) => ({
+        ...prev,
+        phone: "Please enter your phone number!",
+      }));
       hasError = true;
     } else if (!validatePhone(phone)) {
       setErrors((prev) => ({
@@ -38,33 +41,32 @@ const ChangePhoneModal = ({ isOpen, onClose }) => {
     }
 
     if (!rePhone) {
-      setErrors((prev) => ({ ...prev, rePhone: "Please re-enter your phone number!" }));
+      setErrors((prev) => ({
+        ...prev,
+        rePhone: "Please re-enter your phone number!",
+      }));
       hasError = true;
     } else if (!validatePhone(rePhone)) {
       setErrors((prev) => ({
         ...prev,
-        rePhone: "Phone number must be 10 digits long and contain only numbers!",
+        rePhone:
+          "Phone number must be 10 digits long and contain only numbers!",
       }));
       hasError = true;
     } else if (phone !== rePhone) {
-      setErrors((prev) => ({ ...prev, rePhone: "Phone numbers do not match!" }));
+      setErrors((prev) => ({
+        ...prev,
+        rePhone: "Phone numbers do not match!",
+      }));
       hasError = true;
     }
 
     if (hasError) return;
 
     try {
-      const response = await axios.put(
-        "http://localhost:8080/api/admin/update-phone",
-        { newPhoneNumber: phone },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-
+      const response = await api.put("/admin/update-phone", {
+        newPhoneNumber: phone,
+      });
       if (response.status === 200) {
         toast.success("Phone number updated successfully!");
         onClose();
@@ -97,7 +99,9 @@ const ChangePhoneModal = ({ isOpen, onClose }) => {
     isOpen && (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
         <div className="bg-white w-96 p-6 rounded-lg shadow-lg">
-          <h3 className="text-2xl font-semibold text-center mb-4">Change Phone Number</h3>
+          <h3 className="text-2xl font-semibold text-center mb-4">
+            Change Phone Number
+          </h3>
 
           {/* Phone */}
           <div className="mb-4">
@@ -114,7 +118,9 @@ const ChangePhoneModal = ({ isOpen, onClose }) => {
               }`}
               placeholder="Enter your phone number"
             />
-            {touched.phone && errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+            {touched.phone && errors.phone && (
+              <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+            )}
           </div>
 
           {/* Re-enter Phone */}
@@ -132,7 +138,9 @@ const ChangePhoneModal = ({ isOpen, onClose }) => {
               }`}
               placeholder="Re-enter your phone number"
             />
-            {touched.rePhone && errors.rePhone && <p className="text-red-500 text-sm mt-1">{errors.rePhone}</p>}
+            {touched.rePhone && errors.rePhone && (
+              <p className="text-red-500 text-sm mt-1">{errors.rePhone}</p>
+            )}
           </div>
 
           {/* Buttons */}

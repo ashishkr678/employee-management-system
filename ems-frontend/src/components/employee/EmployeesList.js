@@ -1,7 +1,7 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import api from "../../apiConfig/ApiConfig";
 
 const EmployeesList = ({ refreshKey }) => {
   const [employees, setEmployees] = useState([]);
@@ -10,13 +10,11 @@ const EmployeesList = ({ refreshKey }) => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/employees", {
-          withCredentials: true,
-        });
+        const response = await api.get("/employees");
         setEmployees(response.data);
         setLoading(false);
       } catch (error) {
-        toast.error("Failed to load employee data. Log In Again!")
+        toast.error("Failed to load employee data. Log In Again!");
         setLoading(true);
       }
     };

@@ -1,10 +1,8 @@
-import axios from "axios";
+import api from "../../../apiConfig/ApiConfig";
 
 export const CheckAuth = async () => {
   try {
-    const response = await axios.get("http://localhost:8080/api/admin/check-auth", {
-      withCredentials: true,
-    });
+    const response = await api.get("/admin/check-auth");
     return response.status === 200;
   } catch (error) {
     return false;

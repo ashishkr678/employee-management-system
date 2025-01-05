@@ -32,18 +32,24 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
+    // Build Register Admin REST API
     @PostMapping("/register")
     public ResponseEntity<?> registerAdmin(@RequestBody AdminDto adminDto) {
         try {
             adminService.registerAdmin(adminDto);
             return ResponseEntity.ok(Map.of("message", "Admin registered successfully!"));
         } catch (UsernameAlreadyExistsException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Bad Request", "message", e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Bad Request",
+                    "message", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error", "message", e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Error",
+                    "message", e.getMessage()));
         }
     }
 
+    // Build Login Admin REST API
     @PostMapping("/login")
     public ResponseEntity<?> loginAdmin(@RequestBody AdminDto adminDto, HttpServletResponse response) {
         try {
@@ -68,6 +74,7 @@ public class AdminController {
         }
     }
 
+    // Build Get Admin Profile REST API
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(HttpServletRequest request) {
         try {
@@ -84,6 +91,7 @@ public class AdminController {
         }
     }
 
+    // Build Admin Change Password REST API
     @PutMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody Map<String, String> request,
             HttpServletRequest httpServletRequest) {
@@ -93,18 +101,23 @@ public class AdminController {
 
             if (newPassword == null || newPassword.trim().isEmpty()) {
                 return ResponseEntity.badRequest()
-                        .body(Map.of("error", "Bad Request", "message", "New password cannot be empty!"));
+                        .body(Map.of(
+                            "error", "Bad Request",
+                            "message", "New password cannot be empty!"));
             }
 
             adminService.changePassword(httpServletRequest, currentPassword, newPassword);
             return ResponseEntity.ok(Map.of("message", "Password changed successfully!"));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Bad Request", "message", e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Bad Request",
+                    "message", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error", "message", e.getMessage()));
         }
     }
 
+    // Build Admin Change Phone Number REST API
     @PutMapping("/update-phone")
     public ResponseEntity<?> updatePhoneNumber(@RequestBody Map<String, String> request,
             HttpServletRequest httpServletRequest) {
@@ -113,30 +126,42 @@ public class AdminController {
 
             if (newPhoneNumber == null || newPhoneNumber.trim().isEmpty()) {
                 return ResponseEntity.badRequest()
-                        .body(Map.of("error", "Bad Request", "message", "New phone number cannot be empty!"));
+                        .body(Map.of(
+                            "error", "Bad Request",
+                            "message", "New phone number cannot be empty!"));
             }
 
             adminService.updatePhoneNumber(httpServletRequest, newPhoneNumber);
             return ResponseEntity.ok(Map.of("message", "Phone number updated successfully!"));
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(Map.of("error", "Not Found", "message", e.getMessage()));
+            return ResponseEntity.status(404).body(Map.of(
+                    "error", "Not Found",
+                    "message", e.getMessage()));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Bad Request", "message", e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Bad Request",
+                    "message", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error", "message", e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Error",
+                    "message", e.getMessage()));
         }
     }
 
+    // Build Logout Admin REST API
     @PutMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         try {
             adminService.logout(response);
             return ResponseEntity.ok(Map.of("message", "Logged out successfully!"));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error", "message", e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Error",
+                    "message", e.getMessage()));
         }
     }
 
+    // Build Check Admin Authentication Status REST API
     @GetMapping("/check-auth")
     public ResponseEntity<?> checkAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -144,6 +169,8 @@ public class AdminController {
                 && !authentication.getName().equals("anonymousUser")) {
             return ResponseEntity.ok(Map.of("message", "Authenticated"));
         }
-        return ResponseEntity.status(401).body(Map.of("error", "Unauthorized", "message", "User is not authenticated"));
+        return ResponseEntity.status(401).body(Map.of(
+                "error", "Unauthorized",
+                "message", "User is not authenticated"));
     }
 }

@@ -35,9 +35,13 @@ public class AdminForgotPasswordController {
             forgotPasswordService.sendOtpForPasswordReset(username);
             return ResponseEntity.ok(Map.of("message", "OTP sent successfully to your registered email."));
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(Map.of("error", "Not Found", "message", e.getMessage()));
+            return ResponseEntity.status(404).body(Map.of(
+                    "error", "Not Found",
+                    "message", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error", "message", e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Error",
+                    "message", e.getMessage()));
         }
     }
 
@@ -49,9 +53,13 @@ public class AdminForgotPasswordController {
             forgotPasswordService.verifyOtpForPasswordReset(username, otp);
             return ResponseEntity.ok(Map.of("message", "OTP verified successfully!"));
         } catch (BadRequestException e) {
-            return ResponseEntity.status(400).body(Map.of("error", "Bad Request", "message", e.getMessage()));
+            return ResponseEntity.status(400).body(Map.of(
+                    "error", "Bad Request",
+                    "message", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error", "message", e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Error",
+                    "message", e.getMessage()));
         }
     }
 
@@ -67,11 +75,17 @@ public class AdminForgotPasswordController {
             forgotPasswordService.resetPassword(username, newPassword);
             return ResponseEntity.ok(Map.of("message", "Password updated successfully!"));
         } catch (BadRequestException e) {
-            return ResponseEntity.status(400).body(Map.of("error", "Bad Request", "message", e.getMessage()));
+            return ResponseEntity.status(400).body(Map.of(
+                    "error", "Bad Request",
+                    "message", e.getMessage()));
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(Map.of("error", "Not Found", "message", e.getMessage()));
+            return ResponseEntity.status(404).body(Map.of(
+                    "error", "Not Found",
+                    "message", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error", "message", e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Error",
+                    "message", e.getMessage()));
         }
     }
 }

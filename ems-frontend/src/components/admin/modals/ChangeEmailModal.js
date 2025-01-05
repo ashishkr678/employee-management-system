@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import axios from "axios";
+import api from "../../../apiConfig/ApiConfig";
 
 const ChangeEmailModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState("");
@@ -79,12 +79,7 @@ const ChangeEmailModal = ({ isOpen, onClose }) => {
     setLoading(true);
 
     try {
-      await axios.post(
-        "http://localhost:8080/api/admin/update-email/send-otp",
-        { newEmail: email },
-        { withCredentials: true }
-      );
-
+      await api.post("/admin/update-email/send-otp", { newEmail: email });
       toast.success("OTP Sent Successfully...");
       setNewEmail(email);
       setOtpModalOpen(true);
@@ -132,24 +127,22 @@ const ChangeEmailModal = ({ isOpen, onClose }) => {
       setErrors({ otp: "Please enter a 6-digit OTP!" });
       return;
     }
-  
+
     setLoading(true);
     try {
-      await axios.post(
-        "http://localhost:8080/api/admin/update-email/verify-otp",
-        { otp: parseInt(otpValue, 10) },
-        { withCredentials: true }
-      );
-  
+      await api.post("/admin/update-email/verify-otp", {
+        otp: parseInt(otpValue, 10),
+      });
       toast.success("Email updated successfully!");
       setOtpModalOpen(false);
       onClose();
     } catch (error) {
       const errorMessage =
-        error.response?.data?.message || "Failed to verify OTP. Please try again later.";
-      
+        error.response?.data?.message ||
+        "Failed to verify OTP. Please try again later.";
+
       setErrors({ otp: errorMessage });
-  
+
       if (!error.response?.data?.message) {
         toast.error(errorMessage);
       }
@@ -157,7 +150,6 @@ const ChangeEmailModal = ({ isOpen, onClose }) => {
       setLoading(false);
     }
   };
-  
 
   const handleCancel = () => {
     setOtpModalOpen(false);

@@ -1,17 +1,8 @@
-import axios from "axios";
+import api from "../../../apiConfig/ApiConfig";
 
 export const loginUser = async ({ username, password }) => {
   try {
-    const response = await axios.post(
-      "http://localhost:8080/api/admin/login",
-      { username, password },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      }
-    );
+    const response = await api.post("/admin/login", { username, password });
 
     if (response.status >= 400) {
       throw new Error(response.data.message || "Login failed. Please try again.");
@@ -30,12 +21,7 @@ export const loginUser = async ({ username, password }) => {
 
 export const logout = async () => {
   try {
-    const response = await axios.put(
-      "http://localhost:8080/api/admin/logout",
-      {},
-      { withCredentials: true }
-    );
-
+    const response = await api.put("/admin/logout", {});
     if (response.status === 200) {
       return { success: true };
     } else {

@@ -1,9 +1,9 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../auth/auth";
+import api from "../../../apiConfig/ApiConfig";
 
 const ForgotPassword = ({ setIsAuthenticated }) => {
   const [step, setStep] = useState(1);
@@ -81,10 +81,7 @@ const ForgotPassword = ({ setIsAuthenticated }) => {
 
     setLoading(true);
     try {
-      await axios.post(
-        "http://localhost:8080/api/admin/forgot-password/send-otp",
-        { username }
-      );
+      await api.post("/admin/forgot-password/send-otp", { username });
       toast.success("OTP sent successfully to your registered email.");
       setStep(2);
       setOtpSent(true);
@@ -111,9 +108,10 @@ const ForgotPassword = ({ setIsAuthenticated }) => {
 
     setIsVerifyingOtp(true);
     try {
-      await axios.post(
-        `http://localhost:8080/api/admin/forgot-password/verify-otp?username=${username}`,
-        { otp: parseInt(otpValue, 10) }
+      await api.post(
+        "/admin/forgot-password/verify-otp",
+        { otp: parseInt(otpValue, 10) },
+        { params: { username } }
       );
       toast.success("OTP verified successfully!");
       setStep(3);
@@ -202,13 +200,12 @@ const ForgotPassword = ({ setIsAuthenticated }) => {
 
     setLoading(true);
     try {
-      await axios.post(
-        `http://localhost:8080/api/admin/forgot-password/reset-password?username=${username}`,
-        { newPassword }
+      await api.post(
+        `/admin/forgot-password/reset-password`,
+        { newPassword },
+        { params: { username } }
       );
-
       toast.success("Password updated successfully!");
-
       setStep(1);
       setUsername("");
       setOtp(["", "", "", "", "", ""]);
@@ -347,7 +344,7 @@ const ForgotPassword = ({ setIsAuthenticated }) => {
                 className="absolute top-2.5 right-3 text-gray-600 cursor-pointer"
                 onClick={toggleShowPassword}
               >
-                {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20}/>}
+                {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
               </span>
             </div>
             {errors.newPassword && (
@@ -371,7 +368,11 @@ const ForgotPassword = ({ setIsAuthenticated }) => {
                 className="absolute top-2.5 right-3 text-gray-600 cursor-pointer"
                 onClick={toggleShowConfirmPassword}
               >
-                {showConfirmPassword ? <FaEyeSlash size={20} /> : <FaEye size={20}/>}
+                {showConfirmPassword ? (
+                  <FaEyeSlash size={20} />
+                ) : (
+                  <FaEye size={20} />
+                )}
               </span>
             </div>
             {errors.confirmPassword && (
