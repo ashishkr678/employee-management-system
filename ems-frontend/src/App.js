@@ -1,12 +1,6 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
-import {
-  Navigate,
-  Route,
-  BrowserRouter as Router,
-  Routes,
-} from "react-router-dom";
+import { Navigate, BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import Profile from "./components/admin/pages/Profile";
@@ -15,33 +9,20 @@ import EmployeesList from "./components/employee/EmployeesList";
 import ForgotPassword from "./components/admin/pages/ForgotPassword";
 import AddEmployee from "./components/employee/AddEmployee";
 import Login from "./components/admin/pages/Login";
+import { CheckAuth } from "./components/admin/auth/CheckAuth";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8080/api/admin/check-auth",
-          {
-            withCredentials: true,
-          }
-        );
-        if (response.status === 200) {
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        setIsAuthenticated(false);
-      } finally {
-        setLoading(false);
-      }
+    const checkAdminAuth = async () => {
+      const authenticated = await CheckAuth();
+      setIsAuthenticated(authenticated);
+      setLoading(false);
     };
 
-    checkAuth();
+    checkAdminAuth();
   }, []);
 
   if (loading) {
@@ -74,9 +55,7 @@ const App = () => {
             />
             <Route
               path="/forgot-password"
-              element={
-                <ForgotPassword setIsAuthenticated={setIsAuthenticated} />
-              }
+              element={<ForgotPassword setIsAuthenticated={setIsAuthenticated} />}
             />
 
             {isAuthenticated ? (
@@ -85,10 +64,7 @@ const App = () => {
                 <Route path="/employees/:id" element={<EmployeeDetail />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/add-employee" element={<AddEmployee />} />
-                <Route
-                  path="*"
-                  element={<Navigate to={window.location.pathname} />}
-                />
+                <Route path="*" element={<Navigate to={window.location.pathname} />} />
               </>
             ) : (
               <Route path="*" element={<Navigate to="/" />} />
