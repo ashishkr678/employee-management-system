@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FiSearch } from "react-icons/fi";
-import { logout } from "./auth/auth";
+import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { FiSearch } from "react-icons/fi";
+import { Link, useNavigate } from "react-router-dom";
+import { logout } from "./admin/auth/auth";
 
 const Navbar = ({ setIsAuthenticated }) => {
   const [searchId, setSearchId] = useState("");

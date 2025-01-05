@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { FaEye, FaEyeSlash, FaExclamationCircle } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "./auth";
 import toast from "react-hot-toast";
+import { FaExclamationCircle, FaEye, FaEyeSlash } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { loginUser } from "../auth/auth";
 
 const Login = ({ setIsAuthenticated }) => {
   const [username, setUsername] = useState("");

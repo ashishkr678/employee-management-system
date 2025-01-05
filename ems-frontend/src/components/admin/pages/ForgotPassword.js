@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { logout } from "./auth";
+import { logout } from "../auth/auth";
 
 const ForgotPassword = ({ setIsAuthenticated }) => {
   const [step, setStep] = useState(1);
@@ -10,6 +11,8 @@ const ForgotPassword = ({ setIsAuthenticated }) => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [timer, setTimer] = useState(120);
@@ -38,6 +41,10 @@ const ForgotPassword = ({ setIsAuthenticated }) => {
       setCanResend(true);
     }
   }, [otpSent, timer]);
+
+  const toggleShowPassword = () => setShowPassword(!showPassword);
+  const toggleShowConfirmPassword = () =>
+    setShowConfirmPassword(!showConfirmPassword);
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -199,31 +206,30 @@ const ForgotPassword = ({ setIsAuthenticated }) => {
         `http://localhost:8080/api/admin/forgot-password/reset-password?username=${username}`,
         { newPassword }
       );
-    
+
       toast.success("Password updated successfully!");
-    
+
       setStep(1);
       setUsername("");
       setOtp(["", "", "", "", "", ""]);
       setNewPassword("");
       setConfirmPassword("");
-    
+
       if (setIsAuthenticated === true) {
         const logoutResult = await logout();
         if (logoutResult.success) {
           setIsAuthenticated(false);
         }
-      }    
+      }
       navigate("/");
     } catch (error) {
       toast.error(
         error.response?.data?.error ||
-        "Failed to reset password. Please try again later."
+          "Failed to reset password. Please try again later."
       );
     } finally {
       setLoading(false);
     }
-    
   };
 
   return (
@@ -327,15 +333,23 @@ const ForgotPassword = ({ setIsAuthenticated }) => {
             <label className="block text-gray-700 font-medium mb-2">
               New Password <span className="text-red-500">*</span>
             </label>
-            <input
-              type="password"
-              value={newPassword}
-              onChange={handleNewPasswordChange}
-              placeholder="Enter your new password"
-              className={`w-full px-4 py-2 border rounded-md focus:ring-2 ${
-                errors.newPassword ? "border-red-500" : "border-gray-300"
-              }`}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={newPassword}
+                onChange={handleNewPasswordChange}
+                placeholder="Enter your new password"
+                className={`w-full px-4 py-2 border rounded-md focus:ring-2 ${
+                  errors.newPassword ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+              <span
+                className="absolute top-2.5 right-3 text-gray-600 cursor-pointer"
+                onClick={toggleShowPassword}
+              >
+                {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20}/>}
+              </span>
+            </div>
             {errors.newPassword && (
               <p className="text-red-500 text-sm mt-1">{errors.newPassword}</p>
             )}
@@ -343,15 +357,23 @@ const ForgotPassword = ({ setIsAuthenticated }) => {
             <label className="block text-gray-700 font-medium mt-4 mb-2">
               Confirm Password <span className="text-red-500">*</span>
             </label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
-              placeholder="Re-enter your new password"
-              className={`w-full px-4 py-2 border rounded-md focus:ring-2 ${
-                errors.confirmPassword ? "border-red-500" : "border-gray-300"
-              }`}
-            />
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange}
+                placeholder="Re-enter your new password"
+                className={`w-full px-4 py-2 border rounded-md focus:ring-2 ${
+                  errors.confirmPassword ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+              <span
+                className="absolute top-2.5 right-3 text-gray-600 cursor-pointer"
+                onClick={toggleShowConfirmPassword}
+              >
+                {showConfirmPassword ? <FaEyeSlash size={20} /> : <FaEye size={20}/>}
+              </span>
+            </div>
             {errors.confirmPassword && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.confirmPassword}

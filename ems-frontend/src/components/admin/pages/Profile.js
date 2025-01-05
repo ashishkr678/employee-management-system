@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaEdit } from "react-icons/fa";
-import ChangeEmailModal from "./modals/ChangeEmailModal";
-import ChangePhoneModal from "./modals/ChangePhoneModal";
-import ChangePasswordModal from "./modals/ChangePasswordModal";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { FaEdit } from "react-icons/fa";
+import ChangeEmailModal from "../modals/ChangeEmailModal";
+import ChangePasswordModal from "../modals/ChangePasswordModal";
+import ChangePhoneModal from "../modals/ChangePhoneModal";
 
 const Profile = () => {
   const [admin, setAdmin] = useState({

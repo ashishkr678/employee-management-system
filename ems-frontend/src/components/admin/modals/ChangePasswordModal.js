@@ -2,12 +2,18 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const ChangePasswordModal = ({ isOpen, onClose }) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [showPasswords, setShowPasswords] = useState({
+    currentPassword: false,
+    newPassword: false,
+    confirmPassword: false,
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,8 +22,20 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
       setNewPassword("");
       setConfirmPassword("");
       setErrors({});
+      setShowPasswords({
+        currentPassword: false,
+        newPassword: false,
+        confirmPassword: false,
+      });
     }
   }, [isOpen]);
+
+  const togglePasswordVisibility = (field) => {
+    setShowPasswords((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
+  };
 
   const validateFields = () => {
     const newErrors = {};
@@ -48,17 +66,12 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
 
     if (newPassword && currentPassword && newPassword === currentPassword) {
       newErrors.newPassword =
-        "New password cannot be the same as the current password.";
-    }
-
-    if (!confirmPassword) {
-      newErrors.confirmPassword = "Confirm password is required.";
+        "New password cannot be the same as the old password.";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-};
-
+  };
 
   const handleSave = async () => {
     if (!validateFields()) return;
@@ -113,19 +126,28 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
             <label className="block text-gray-700 font-semibold mb-2">
               Current Password <span className="text-red-500">*</span>
             </label>
-            <input
-              type="password"
-              name="currentPassword"
-              value={currentPassword}
-              placeholder="Enter current password"
-              onChange={handleInputChange(
-                setCurrentPassword,
-                "currentPassword"
-              )}
-              className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none ${
-                errors.currentPassword ? "border-red-500" : ""
-              }`}
-            />
+            <div className="relative">
+              <input
+                type={showPasswords.currentPassword ? "text" : "password"}
+                name="currentPassword"
+                value={currentPassword}
+                placeholder="Enter current password"
+                onChange={handleInputChange(
+                  setCurrentPassword,
+                  "currentPassword"
+                )}
+                className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none ${
+                  errors.currentPassword ? "border-red-500" : ""
+                }`}
+              />
+              <button
+                type="button"
+                onClick={() => togglePasswordVisibility("currentPassword")}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500"
+              >
+                {showPasswords.currentPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+              </button>
+            </div>
             {errors.currentPassword && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.currentPassword}
@@ -137,16 +159,25 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
             <label className="block text-gray-700 font-semibold mb-2">
               New Password <span className="text-red-500">*</span>
             </label>
-            <input
-              type="password"
-              name="newPassword"
-              value={newPassword}
-              placeholder="Enter new password"
-              onChange={handleInputChange(setNewPassword, "newPassword")}
-              className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none ${
-                errors.newPassword ? "border-red-500" : ""
-              }`}
-            />
+            <div className="relative">
+              <input
+                type={showPasswords.newPassword ? "text" : "password"}
+                name="newPassword"
+                value={newPassword}
+                placeholder="Enter new password"
+                onChange={handleInputChange(setNewPassword, "newPassword")}
+                className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none ${
+                  errors.newPassword ? "border-red-500" : ""
+                }`}
+              />
+              <button
+                type="button"
+                onClick={() => togglePasswordVisibility("newPassword")}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500"
+              >
+                {showPasswords.newPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+              </button>
+            </div>
             {errors.newPassword && (
               <p className="text-red-500 text-sm mt-1">{errors.newPassword}</p>
             )}
@@ -156,19 +187,28 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
             <label className="block text-gray-700 font-semibold mb-2">
               Confirm Password <span className="text-red-500">*</span>
             </label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={confirmPassword}
-              placeholder="Re-enter new password"
-              onChange={handleInputChange(
-                setConfirmPassword,
-                "confirmPassword"
-              )}
-              className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none ${
-                errors.confirmPassword ? "border-red-500" : ""
-              }`}
-            />
+            <div className="relative">
+              <input
+                type={showPasswords.confirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                value={confirmPassword}
+                placeholder="Re-enter new password"
+                onChange={handleInputChange(
+                  setConfirmPassword,
+                  "confirmPassword"
+                )}
+                className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none ${
+                  errors.confirmPassword ? "border-red-500" : ""
+                }`}
+              />
+              <button
+                type="button"
+                onClick={() => togglePasswordVisibility("confirmPassword")}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500"
+              >
+                {showPasswords.confirmPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+              </button>
+            </div>
             {errors.confirmPassword && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.confirmPassword}

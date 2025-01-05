@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import EmployeesList from "./components/EmployeesList";
-import EmployeeDetail from "./components/EmployeeDetail";
-import Login from "./components/auth/Login";
-import Profile from "./components/auth/Profile";
-import AddEmployee from "./components/AddEmployee";
-import ForgotPassword from "./components/auth/ForgotPassword";
-import { FaSpinner } from "react-icons/fa";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { FaSpinner } from "react-icons/fa";
+import {
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from "react-router-dom";
+import Footer from "./components/Footer";
+import Navbar from "./components/Navbar";
+import Profile from "./components/admin/pages/Profile";
+import EmployeeDetail from "./components/employee/EmployeeDetail";
+import EmployeesList from "./components/employee/EmployeesList";
+import ForgotPassword from "./components/admin/pages/ForgotPassword";
+import AddEmployee from "./components/employee/AddEmployee";
+import Login from "./components/admin/pages/Login";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
