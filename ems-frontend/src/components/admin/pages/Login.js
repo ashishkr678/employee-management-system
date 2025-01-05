@@ -141,7 +141,7 @@ const Login = ({ setIsAuthenticated }) => {
         </div>
       </div>
       <p className="text-center text-red-500 mb-4">
-        Note: Use username = 'demo' and password = 'demo' to take a demo of the app.
+        Note: Use username = 'demo' and password = 'demo' to take a demo tour of the app.
       </p>
     </div>
   );
