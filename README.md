@@ -23,7 +23,7 @@ For users who want to clone and set up the project locally, follow these steps:
 
 ### Clone the Repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/ashishkr678/employee-management-system.git
 cd <repository-directory>
 ```
 
