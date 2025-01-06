@@ -49,41 +49,14 @@ cd <repository-directory>
    - Create a `.env` file with the following content:
      ```env
      # Database Configuration
-     DATABASE_URL=jdbc:mysql://localhost:3306/employee_management
-     DATABASE_USERNAME=<your-mysql-username>
-     DATABASE_PASSWORD=<your-mysql-password>
+     DB_URL=jdbc:mysql://localhost:3306/employee_management
+     DB_USERNAME=<your-mysql-username>
+     DB_PASSWORD=<your-mysql-password>
 
      # Mail Configuration
      MAIL_PORT=587
      MAIL_USERNAME=<your-mail-username>
      MAIL_PASSWORD=<your-mail-password>
-     ```
-
-   - Create an `application.properties` file in the `src/main/resources` directory with the following content:
-     ```properties
-     spring.application.name=ems-backend
-
-     # Database Configuration
-     spring.datasource.url=${DATABASE_URL}
-     spring.datasource.username=${DATABASE_USERNAME}
-     spring.datasource.password=${DATABASE_PASSWORD}
-
-     # JPA Configuration
-     spring.jpa.hibernate.ddl-auto=update
-
-     # Spring Security Dispatcher
-     spring.security.filter.dispatcher-types=ASYNC, FORWARD, INCLUDE, REQUEST
-
-     # Mail Configuration
-     spring.mail.host=smtp.gmail.com
-     spring.mail.port=${MAIL_PORT}
-     spring.mail.username=${MAIL_USERNAME}
-     spring.mail.password=${MAIL_PASSWORD}
-     spring.mail.properties.mail.smtp.auth=true
-     spring.mail.properties.mail.smtp.starttls.enable=true
-     spring.mail.properties.mail.smtp.starttls.required=true
-     spring.mail.properties.mail.smtp.timeout=5000
-     spring.mail.properties.mail.debug=true
      ```
 
 4. Build and run the backend:
