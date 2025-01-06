@@ -9,13 +9,17 @@ import com.ems.ems_backend.security.DotenvConfig;
 @SpringBootTest
 class EmsBackendApplicationTests {
 
-	@BeforeAll
+    @BeforeAll
     static void setup() {
-        DotenvConfig.loadSystemProperties();
+        String profile = System.getenv("SPRING_PROFILES_ACTIVE");
+        
+        if (profile == null || profile.equals("dev")) {
+            DotenvConfig.loadSystemProperties();
+        }
     }
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
 
+	}
 }

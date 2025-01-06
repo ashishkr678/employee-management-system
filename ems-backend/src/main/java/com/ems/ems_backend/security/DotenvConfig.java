@@ -6,9 +6,7 @@ public class DotenvConfig {
     private static Dotenv dotenv;
 
     static {
-        dotenv = Dotenv.configure()
-                .directory("ems-backend//.env")
-                .load();
+        dotenv = Dotenv.configure().load();
     }
 
     public static String get(String key) {
@@ -16,9 +14,11 @@ public class DotenvConfig {
     }
 
     public static void loadSystemProperties() {
-        System.setProperty("DATABASE_URL", get("DATABASE_URL"));
-        System.setProperty("DATABASE_USERNAME", get("DATABASE_USERNAME"));
-        System.setProperty("DATABASE_PASSWORD", get("DATABASE_PASSWORD"));
+        System.setProperty("DB_URL", get("DB_URL"));
+        System.setProperty("DB_USER", get("DB_USER"));
+        System.setProperty("DB_PASSWORD", get("DB_PASSWORD"));
+        System.setProperty("DB_NAME", get("DB_NAME"));
+        System.setProperty("MAIL_URL", get("MAIL_URL"));
         System.setProperty("MAIL_PORT", get("MAIL_PORT"));
         System.setProperty("MAIL_USERNAME", get("MAIL_USERNAME"));
         System.setProperty("MAIL_PASSWORD", get("MAIL_PASSWORD"));
