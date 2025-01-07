@@ -37,7 +37,7 @@ public class AdminController {
     public ResponseEntity<?> registerAdmin(@RequestBody AdminDto adminDto) {
         try {
             adminService.registerAdmin(adminDto);
-            return ResponseEntity.ok(Map.of("message", "Admin registered successfully!"));
+            return ResponseEntity.ok(Map.of("message", "Admin registered successfully."));
         } catch (UsernameAlreadyExistsException e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Bad Request",
@@ -54,7 +54,7 @@ public class AdminController {
     public ResponseEntity<?> loginAdmin(@RequestBody AdminDto adminDto, HttpServletResponse response) {
         try {
             adminService.loginAdmin(adminDto.getUsername(), adminDto.getPassword(), response);
-            return ResponseEntity.ok(Map.of("message", "Login successful!"));
+            return ResponseEntity.ok(Map.of("message", "Login successful."));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(404).body(Map.of(
                     "error", "Not Found",
@@ -107,7 +107,7 @@ public class AdminController {
             }
 
             adminService.changePassword(httpServletRequest, currentPassword, newPassword);
-            return ResponseEntity.ok(Map.of("message", "Password changed successfully!"));
+            return ResponseEntity.ok(Map.of("message", "Password changed successfully."));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Bad Request",
@@ -132,7 +132,7 @@ public class AdminController {
             }
 
             adminService.updatePhoneNumber(httpServletRequest, newPhoneNumber);
-            return ResponseEntity.ok(Map.of("message", "Phone number updated successfully!"));
+            return ResponseEntity.ok(Map.of("message", "Phone number updated successfully."));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(404).body(Map.of(
                     "error", "Not Found",
@@ -149,11 +149,11 @@ public class AdminController {
     }
 
     // Build Logout Admin REST API
-    @PutMapping("/logout")
+    @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         try {
             adminService.logout(response);
-            return ResponseEntity.ok(Map.of("message", "Logged out successfully!"));
+            return ResponseEntity.ok(Map.of("message", "Logged out successfully."));
         } catch (RuntimeException e) {
             return ResponseEntity.status(500).body(Map.of(
                     "error", "Error",
@@ -171,6 +171,6 @@ public class AdminController {
         }
         return ResponseEntity.status(401).body(Map.of(
                 "error", "Unauthorized",
-                "message", "User is not authenticated"));
+                "message", "User is not authenticated."));
     }
 }

@@ -68,7 +68,7 @@ const AddEmployee = () => {
       toast.success("Employee added successfully!");
       navigate("/employees");
     } catch (error) {
-      if (error.response && error.response.status === 409) {
+      if (error.response && error.response.status === 400) {
         setErrors((prev) => ({ ...prev, email: "This email already exists!" }));
       } else {
         toast.error("Error adding employee. Try again!");

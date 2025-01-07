@@ -23,7 +23,10 @@ const ChangePhoneModal = ({ isOpen, onClose }) => {
   };
 
   const handleSave = async () => {
+    // Reset errors and set touched for all fields when trying to save
     setErrors({});
+    setTouched({ phone: true, rePhone: true });
+
     let hasError = false;
 
     if (!phone) {
@@ -49,8 +52,7 @@ const ChangePhoneModal = ({ isOpen, onClose }) => {
     } else if (!validatePhone(rePhone)) {
       setErrors((prev) => ({
         ...prev,
-        rePhone:
-          "Phone number must be 10 digits long and contain only numbers!",
+        rePhone: "Phone number must be 10 digits long and contain only numbers!",
       }));
       hasError = true;
     } else if (phone !== rePhone) {

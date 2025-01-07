@@ -15,8 +15,6 @@ public class DotenvConfig {
 
     public static void loadSystemProperties() {
         System.setProperty("DB_URL", get("DB_URL"));
-        System.setProperty("DB_USER", get("DB_USER"));
-        System.setProperty("DB_PASSWORD", get("DB_PASSWORD"));
         System.setProperty("DB_NAME", get("DB_NAME"));
         System.setProperty("MAIL_URL", get("MAIL_URL"));
         System.setProperty("MAIL_PORT", get("MAIL_PORT"));

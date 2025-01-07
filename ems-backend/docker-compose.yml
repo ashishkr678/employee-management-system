@@ -1,29 +1,19 @@
 version: "3.8"
 
 services:
-  mysql:
-    image: mysql:8
-    container_name: mysqldb
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-    ports:
-      - "3307:3306"
-
   springboot:
     build: .
     container_name: ems-app
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       DB_URL: ${DB_URL}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
       MAIL_URL: ${MAIL_URL}
       MAIL_PORT: ${MAIL_PORT}
       MAIL_USERNAME: ${MAIL_USERNAME}
       MAIL_PASSWORD: ${MAIL_PASSWORD}
     ports:
       - "8080:8080"
-    depends_on:
-      - mysql
+    env_file:
+      - .env
 

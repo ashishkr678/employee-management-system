@@ -38,13 +38,11 @@ public class AdminServiceImpl implements AdminService {
         try {
             Optional<Admin> existingAdminByUsername = adminRepository.findByUsername(adminDto.getUsername());
             if (existingAdminByUsername.isPresent()) {
-                System.out.println("Admin with username already exists: " + adminDto.getUsername());
                 throw new UsernameAlreadyExistsException("Username already exists!");
             }
 
             Optional<Admin> existingAdminByEmail = adminRepository.findByEmail(adminDto.getEmail());
             if (existingAdminByEmail.isPresent()) {
-                System.out.println("Admin with email already exists: " + adminDto.getEmail());
                 throw new EmailAlreadyExistsException("Email already exists!");
             }
 
@@ -122,7 +120,7 @@ public class AdminServiceImpl implements AdminService {
     public void changePassword(HttpServletRequest request, String currentPassword, String newPassword) {
         String username = extractUsernameFromCookie(request);
         if (username == null) {
-            throw new IllegalArgumentException("No username found.");
+            throw new IllegalArgumentException("No username found!");
         }
 
         Admin admin = adminRepository.findByUsername(username)

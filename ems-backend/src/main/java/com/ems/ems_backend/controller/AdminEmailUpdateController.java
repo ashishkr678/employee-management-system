@@ -67,7 +67,7 @@ public class AdminEmailUpdateController {
         try {
             adminService.verifyOtpAndUpdateEmail(request, otp);
             return ResponseEntity.ok(Map.of(
-                    "message", "Email updated successfully!"));
+                    "message", "Email updated successfully."));
         } catch (UnauthorizedException e) {
             return ResponseEntity.status(403).body(Map.of(
                     "error", "Unauthorized",

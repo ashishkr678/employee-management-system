@@ -37,7 +37,7 @@ public class AdminForgotPasswordServiceImpl implements AdminForgotPasswordServic
     @Override
     public void sendOtpForPasswordReset(String username) {
         Admin admin = adminRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Username not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Username not found!"));
 
         int otp = new Random().nextInt(900000) + 100000;
         OTPData otpData = new OTPData(otp, null);
@@ -71,11 +71,11 @@ public class AdminForgotPasswordServiceImpl implements AdminForgotPasswordServic
         OTPData otpData = otpStorage.get(username);
 
         if (otpData == null || !otpData.isVerified()) {
-            throw new BadRequestException("OTP verification required before resetting password.");
+            throw new BadRequestException("OTP verification required before resetting password!");
         }
 
         Admin admin = adminRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Username not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Username not found!"));
 
         admin.setPassword(passwordEncoder.encode(newPassword));
         adminRepository.save(admin);

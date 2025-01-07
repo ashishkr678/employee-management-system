@@ -51,7 +51,7 @@ public class AdminForgotPasswordController {
 
         try {
             forgotPasswordService.verifyOtpForPasswordReset(username, otp);
-            return ResponseEntity.ok(Map.of("message", "OTP verified successfully!"));
+            return ResponseEntity.ok(Map.of("message", "OTP verified successfully."));
         } catch (BadRequestException e) {
             return ResponseEntity.status(400).body(Map.of(
                     "error", "Bad Request",
@@ -73,7 +73,7 @@ public class AdminForgotPasswordController {
 
         try {
             forgotPasswordService.resetPassword(username, newPassword);
-            return ResponseEntity.ok(Map.of("message", "Password updated successfully!"));
+            return ResponseEntity.ok(Map.of("message", "Password updated successfully."));
         } catch (BadRequestException e) {
             return ResponseEntity.status(400).body(Map.of(
                     "error", "Bad Request",

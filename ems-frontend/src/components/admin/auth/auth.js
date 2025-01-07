@@ -21,7 +21,7 @@ export const loginUser = async ({ username, password }) => {
 
 export const logout = async () => {
   try {
-    const response = await api.put("/admin/logout", {});
+    const response = await api.post("/admin/logout", {});
     if (response.status === 200) {
       return { success: true };
     } else {

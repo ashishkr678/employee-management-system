@@ -40,7 +40,7 @@ public class AdminEmailUpdateServiceImpl implements AdminEmailUpdateService {
 
         Optional<Admin> existingAdmin = adminRepository.findByEmail(newEmail);
         if (existingAdmin.isPresent()) {
-            throw new BadRequestException("Email already exists.");
+            throw new BadRequestException("Email already exists!");
         }
         int otp = new Random().nextInt(900000) + 100000;
         OTPData otpData = new OTPData(otp, newEmail);
@@ -64,7 +64,7 @@ public class AdminEmailUpdateServiceImpl implements AdminEmailUpdateService {
         }
 
         if (otpData.getOtp() != otp) {
-            throw new BadRequestException("Incorrect OTP.");
+            throw new BadRequestException("Incorrect OTP!");
         }
 
         otpStorage.remove(username);
@@ -83,6 +83,6 @@ public class AdminEmailUpdateServiceImpl implements AdminEmailUpdateService {
                 return cookie.getValue();
             }
         }
-        throw new UnauthorizedException("Unauthorized: No username found in cookies.");
+        throw new UnauthorizedException("No username found in cookies!");
     }
 }
