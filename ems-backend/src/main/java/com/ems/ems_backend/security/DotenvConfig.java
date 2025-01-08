@@ -20,5 +20,8 @@ public class DotenvConfig {
         System.setProperty("MAIL_PORT", get("MAIL_PORT"));
         System.setProperty("MAIL_USERNAME", get("MAIL_USERNAME"));
         System.setProperty("MAIL_PASSWORD", get("MAIL_PASSWORD"));
+        System.setProperty("PROFILES_ACTIVE", get("PROFILES_ACTIVE"));
+        System.setProperty("FRONTEND_DOMAIN", get("FRONTEND_DOMAIN"));
+        System.setProperty("SECRET_KEY", get("SECRET_KEY"));
     }
 }

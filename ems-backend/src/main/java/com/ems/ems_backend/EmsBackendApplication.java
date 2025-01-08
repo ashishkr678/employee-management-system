@@ -9,7 +9,7 @@ import com.ems.ems_backend.security.DotenvConfig;
 public class EmsBackendApplication {
     public static void main(String[] args) {
         
-        String profile = System.getenv("SPRING_PROFILES_ACTIVE");
+        String profile = System.getenv("PROFILES_ACTIVE");
         
         if (profile == null || profile.equals("dev")) {
             DotenvConfig.loadSystemProperties();

@@ -60,8 +60,17 @@ public class SecurityConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
+
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:3000");
+
+        String frontendDomain = DotenvConfig.get("FRONTEND_DOMAIN");
+
+        if ("localhost".equals(frontendDomain)) {
+            config.addAllowedOrigin("http://localhost:3000");
+        } else {
+            config.addAllowedOrigin("https://your-frontend-domain.vercel.app");
+        }
+
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);

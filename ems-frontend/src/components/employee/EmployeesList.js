@@ -14,7 +14,7 @@ const EmployeesList = ({ refreshKey }) => {
         setEmployees(response.data);
         setLoading(false);
       } catch (error) {
-        toast.error("Failed to load employee data. Log In Again!");
+        toast.error("Failed to load employee data!");
         setLoading(true);
       }
     };

@@ -13,6 +13,7 @@ import com.ems.ems_backend.exception.ResourceNotFoundException;
 import com.ems.ems_backend.exception.UsernameAlreadyExistsException;
 import com.ems.ems_backend.jwt.JwtUtil;
 import com.ems.ems_backend.repository.AdminRepository;
+import com.ems.ems_backend.security.DotenvConfig;
 import com.ems.ems_backend.service.AdminService;
 
 import jakarta.servlet.http.Cookie;
@@ -80,20 +81,45 @@ public class AdminServiceImpl implements AdminService {
             Cookie jwtCookie = new Cookie("jwt", token);
             jwtCookie.setHttpOnly(true);
             jwtCookie.setPath("/");
-            jwtCookie.setMaxAge(10 * 60 * 60);
+            jwtCookie.setMaxAge(10 * 60 * 60); // 10 hours
+
+            boolean isProduction = DotenvConfig.get("PROFILES_ACTIVE").equals("prod");
+            jwtCookie.setSecure(isProduction);
+
+            String sameSite = isProduction ? "None" : "Lax";
+            response.addHeader("Set-Cookie", createCookieWithSameSite(jwtCookie, sameSite));
 
             Cookie usernameCookie = new Cookie("username", admin.getUsername());
             usernameCookie.setHttpOnly(false);
             usernameCookie.setPath("/");
-            usernameCookie.setMaxAge(10 * 60 * 60);
+            usernameCookie.setMaxAge(10 * 60 * 60); // 10 hours
 
-            response.addCookie(jwtCookie);
-            response.addCookie(usernameCookie);
+            usernameCookie.setSecure(isProduction);
+
+            response.addHeader("Set-Cookie", createCookieWithSameSite(usernameCookie, sameSite));
+
         } catch (ResourceNotFoundException | IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("An unexpected error occurred: " + e.getMessage());
         }
+    }
+
+    private String createCookieWithSameSite(Cookie cookie, String sameSite) {
+        StringBuilder cookieBuilder = new StringBuilder();
+
+        cookieBuilder.append(cookie.getName()).append("=").append(cookie.getValue()).append(";");
+        cookieBuilder.append(" Path=").append(cookie.getPath()).append(";");
+        cookieBuilder.append(" Max-Age=").append(cookie.getMaxAge()).append(";");
+        if (cookie.getSecure()) {
+            cookieBuilder.append(" Secure;");
+        }
+        if (cookie.isHttpOnly()) {
+            cookieBuilder.append(" HttpOnly;");
+        }
+        cookieBuilder.append(" SameSite=").append(sameSite).append(";");
+
+        return cookieBuilder.toString();
     }
 
     @Override
@@ -168,17 +194,15 @@ public class AdminServiceImpl implements AdminService {
     public void logout(HttpServletResponse response) {
         try {
             Cookie jwtCookie = new Cookie("jwt", null);
-            jwtCookie.setHttpOnly(true);
-            jwtCookie.setPath("/");
             jwtCookie.setMaxAge(0);
+            jwtCookie.setPath("/");
+            response.addCookie(jwtCookie);
 
             Cookie usernameCookie = new Cookie("username", null);
-            usernameCookie.setHttpOnly(false);
-            usernameCookie.setPath("/");
             usernameCookie.setMaxAge(0);
-
-            response.addCookie(jwtCookie);
+            usernameCookie.setPath("/");
             response.addCookie(usernameCookie);
+
         } catch (Exception e) {
             throw new RuntimeException("An error occurred while logging out: " + e.getMessage(), e);
         }
