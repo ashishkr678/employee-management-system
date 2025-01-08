@@ -81,7 +81,7 @@ public class AdminServiceImpl implements AdminService {
             Cookie jwtCookie = new Cookie("jwt", token);
             jwtCookie.setHttpOnly(true);
             jwtCookie.setPath("/");
-            jwtCookie.setMaxAge(10 * 60 * 60); // 10 hours
+            jwtCookie.setMaxAge(10 * 60 * 60);
 
             boolean isProduction = DotenvConfig.get("PROFILES_ACTIVE").equals("prod");
             jwtCookie.setSecure(isProduction);
@@ -92,7 +92,7 @@ public class AdminServiceImpl implements AdminService {
             Cookie usernameCookie = new Cookie("username", admin.getUsername());
             usernameCookie.setHttpOnly(false);
             usernameCookie.setPath("/");
-            usernameCookie.setMaxAge(10 * 60 * 60); // 10 hours
+            usernameCookie.setMaxAge(10 * 60 * 60);
 
             usernameCookie.setSecure(isProduction);
 
