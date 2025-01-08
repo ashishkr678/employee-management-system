@@ -1,9 +1,7 @@
-# node_modules
-# build
-# .dockerignore
-# Dockerfile
-# docker-compose.yml
-# .env
-# .git
-# .gitignore
-# npm-debug.log
+node_modules
+build
+.dockerignore
+.env
+.git
+.gitignore
+npm-debug.log
