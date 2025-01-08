@@ -193,16 +193,21 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void logout(HttpServletResponse response) {
         try {
+            boolean isProduction = System.getenv("PROFILES_ACTIVE").equals("prod");
+
             Cookie jwtCookie = new Cookie("jwt", null);
-            jwtCookie.setMaxAge(0);
+            jwtCookie.setHttpOnly(true);
             jwtCookie.setPath("/");
-            response.addCookie(jwtCookie);
+            jwtCookie.setSecure(isProduction);
+            jwtCookie.setMaxAge(0);
+            response.addHeader("Set-Cookie", createCookieWithSameSite(jwtCookie, isProduction ? "None" : "Lax"));
 
             Cookie usernameCookie = new Cookie("username", null);
-            usernameCookie.setMaxAge(0);
+            usernameCookie.setHttpOnly(false);
             usernameCookie.setPath("/");
-            response.addCookie(usernameCookie);
-
+            usernameCookie.setSecure(isProduction);
+            usernameCookie.setMaxAge(0);
+            response.addHeader("Set-Cookie", createCookieWithSameSite(usernameCookie, isProduction ? "None" : "Lax"));
         } catch (Exception e) {
             throw new RuntimeException("An error occurred while logging out: " + e.getMessage(), e);
         }
