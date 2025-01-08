@@ -23,7 +23,6 @@ const ChangePhoneModal = ({ isOpen, onClose }) => {
   };
 
   const handleSave = async () => {
-    // Reset errors and set touched for all fields when trying to save
     setErrors({});
     setTouched({ phone: true, rePhone: true });
 
