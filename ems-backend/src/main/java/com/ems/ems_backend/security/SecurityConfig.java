@@ -68,7 +68,7 @@ public class SecurityConfig {
         if ("localhost".equals(frontendDomain)) {
             config.addAllowedOrigin("http://localhost:3000");
         } else {
-            config.addAllowedOrigin("https://your-frontend-domain.vercel.app");
+            config.addAllowedOrigin("https://employee-management-system-eta-teal.vercel.app");
         }
 
         config.addAllowedHeader("*");
