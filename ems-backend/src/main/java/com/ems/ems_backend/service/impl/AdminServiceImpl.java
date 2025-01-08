@@ -83,7 +83,7 @@ public class AdminServiceImpl implements AdminService {
             jwtCookie.setPath("/");
             jwtCookie.setMaxAge(10 * 60 * 60);
 
-            boolean isProduction = DotenvConfig.get("PROFILES_ACTIVE").equals("prod");
+            boolean isProduction = System.getenv("PROFILES_ACTIVE").equals("prod");
             jwtCookie.setSecure(isProduction);
 
             String sameSite = isProduction ? "None" : "Lax";

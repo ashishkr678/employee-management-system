@@ -7,8 +7,6 @@ import javax.crypto.SecretKey;
 
 import org.springframework.stereotype.Component;
 
-import com.ems.ems_backend.security.DotenvConfig;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -21,7 +19,7 @@ public class JwtUtil {
     private SecretKey SECRET_KEY;
 
     public JwtUtil() {
-        String secretKey = DotenvConfig.get("SECRET_KEY");
+        String secretKey = System.getenv("SECRET_KEY");
         this.SECRET_KEY = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 

@@ -63,7 +63,7 @@ public class SecurityConfig {
 
         config.setAllowCredentials(true);
 
-        String frontendDomain = DotenvConfig.get("FRONTEND_DOMAIN");
+        String frontendDomain = System.getenv("FRONTEND_DOMAIN");
 
         if ("localhost".equals(frontendDomain)) {
             config.addAllowedOrigin("http://localhost:3000");
