@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import api from "../../apiConfig/ApiConfig";
+import { FaSpinner } from "react-icons/fa";
 
 const EmployeesList = ({ refreshKey }) => {
   const [employees, setEmployees] = useState([]);
@@ -27,7 +28,12 @@ const EmployeesList = ({ refreshKey }) => {
       {/* Table Section */}
       <div className="w-full max-w-6xl px-4 py-8">
         {loading ? (
-          <p className="text-center text-gray-500">Loading...</p>
+          <div className="flex items-center justify-center h-screen bg-gray-100">
+            <div className="text-center">
+              <FaSpinner className="text-4xl text-blue-500 animate-spin mx-auto mb-4" />
+              <p className="text-lg font-semibold text-gray-700">Loading...</p>
+            </div>
+          </div>
         ) : (
           <div className="overflow-x-auto rounded-lg shadow-lg">
             <table className="min-w-full border border-gray-300 bg-white">

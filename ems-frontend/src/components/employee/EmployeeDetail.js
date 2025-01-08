@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import api from "../../apiConfig/ApiConfig";
+import { FaSpinner } from "react-icons/fa";
 
 const EmployeeDetail = () => {
   const { id } = useParams();
@@ -90,7 +91,14 @@ const EmployeeDetail = () => {
   };
 
   if (!employee) {
-    return <p className="text-center">Loading employee details...</p>;
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="text-center">
+          <FaSpinner className="text-4xl text-blue-500 animate-spin mx-auto mb-4" />
+          <p className="text-lg font-semibold text-gray-700">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
