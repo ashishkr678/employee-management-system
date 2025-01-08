@@ -17,6 +17,4 @@ services:
         FRONTEND_DOMAIN=${FRONTEND_DOMAIN}
         SECRET_KEY=${SECRET_KEY}
     ports:
-      - "8080:8080"
-    env_file:
-      - .env
+      - "8082:8080"
