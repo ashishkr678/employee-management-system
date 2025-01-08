@@ -12,7 +12,7 @@ If you just want to explore the app:
 - **Password:** demo
 
 ### Website Link:
-[Visit the App](#)
+[Visit the App](https://employee-management-system-dkbvlewk1.vercel.app)
 
 Use the above credentials to log in and explore the features.
 
@@ -46,18 +46,7 @@ cd <repository-directory>
    ```
 
 3. Add configuration files in the backend:
-   - Create a `.env` file with the following content:
-     ```env
-     # Database Configuration
-     DB_URL=jdbc:mysql://localhost:3306/employee_management
-     DB_USERNAME=<your-mysql-username>
-     DB_PASSWORD=<your-mysql-password>
-
-     # Mail Configuration
-     MAIL_PORT=587
-     MAIL_USERNAME=<your-mail-username>
-     MAIL_PASSWORD=<your-mail-password>
-     ```
+   - Create a .env file by referencing the required variables in the application.properties or other necessary configuration files.
 
 4. Build and run the backend:
    ```bash
