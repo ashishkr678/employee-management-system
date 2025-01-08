@@ -102,8 +102,8 @@ public class AdminController {
             if (newPassword == null || newPassword.trim().isEmpty()) {
                 return ResponseEntity.badRequest()
                         .body(Map.of(
-                            "error", "Bad Request",
-                            "message", "New password cannot be empty!"));
+                                "error", "Bad Request",
+                                "message", "New password cannot be empty!"));
             }
 
             adminService.changePassword(httpServletRequest, currentPassword, newPassword);
@@ -127,8 +127,8 @@ public class AdminController {
             if (newPhoneNumber == null || newPhoneNumber.trim().isEmpty()) {
                 return ResponseEntity.badRequest()
                         .body(Map.of(
-                            "error", "Bad Request",
-                            "message", "New phone number cannot be empty!"));
+                                "error", "Bad Request",
+                                "message", "New phone number cannot be empty!"));
             }
 
             adminService.updatePhoneNumber(httpServletRequest, newPhoneNumber);
@@ -169,9 +169,7 @@ public class AdminController {
                 && !authentication.getName().equals("anonymousUser")) {
             return ResponseEntity.ok(Map.of("message", "Authenticated"));
         }
-        return ResponseEntity.status(401).body(Map.of(
-                "error", "Unauthorized",
-                "message", "User is not authenticated."));
+        return ResponseEntity.ok(Map.of("message", "User is not authenticated."));
     }
-    
+
 }
