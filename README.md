@@ -1,6 +1,6 @@
 # Employee Management Application
 
-Welcome to the Employee Management Application, a comprehensive solution for managing employees. Built with modern technologies like Spring Boot, MySQL, React, and TailwindCSS, this app emphasizes security, efficiency, and usability, offering administrators a seamless experience for managing employee data.
+Welcome to the Employee Management Application, a comprehensive solution for managing employees. Built with modern technologies like Spring Boot, MongoDB, React, and TailwindCSS, this app emphasizes security, efficiency, and usability, offering administrators a seamless experience for managing employee data.
 
 ---
 
