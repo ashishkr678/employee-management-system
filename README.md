@@ -31,7 +31,7 @@ cd <repository-directory>
 
 #### 1. **Requirements:**
 - Java 11+
-- MySQL
+- MongoDB
 - Maven
 
 #### 2. **Steps:**
@@ -40,10 +40,7 @@ cd <repository-directory>
    cd backend
    ```
 
-2. Create a MySQL database:
-   ```sql
-   CREATE DATABASE employee_management;
-   ```
+2. Create a MongoDB database and congifure it.
 
 3. Add configuration files in the backend:
    - Create a .env file by referencing the required variables in the application.properties or other necessary configuration files.
